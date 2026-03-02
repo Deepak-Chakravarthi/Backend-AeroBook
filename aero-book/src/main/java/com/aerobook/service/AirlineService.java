@@ -1,0 +1,82 @@
+package com.aerobook.service;
+
+import com.aerobook.enitity.Airline;
+import com.aerobook.domain.dto.request.AirlineRequest;
+import com.aerobook.domain.dto.response.AirlineResponse;
+import com.aerobook.domain.enums.AirlineStatus;
+import com.aerobook.exception.DuplicateResourceException;
+import com.aerobook.exception.ResourceNotFoundException;
+import com.aerobook.mapper.AirlineMapper;
+import com.aerobook.repository.AirlineRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class AirlineService {
+
+    private final AirlineRepository airlineRepository;
+    private final AirlineMapper airlineMapper;
+
+    public List<AirlineResponse> getAllAirlines() {
+        return airlineRepository.findAll().stream()
+                .map(airlineMapper::toResponse)
+                .toList();
+    }
+
+    public List<AirlineResponse> getActiveAirlines() {
+        return airlineRepository.findAllByStatus(AirlineStatus.ACTIVE).stream()
+                .map(airlineMapper::toResponse)
+                .toList();
+    }
+
+    public AirlineResponse getAirlineById(Long id) {
+        return airlineMapper.toResponse(findAirlineById(id));
+    }
+
+    public AirlineResponse getAirlineByIataCode(String iataCode) {
+        Airline airline = airlineRepository.findByIataCode(iataCode.toUpperCase())
+                .orElseThrow(() -> new ResourceNotFoundException("Airline", "IATA code", iataCode));
+        return airlineMapper.toResponse(airline);
+    }
+
+    @Transactional
+    public AirlineResponse createAirline(AirlineRequest request) {
+        if (airlineRepository.existsByIataCode(request.iataCode().toUpperCase())) {
+            throw new DuplicateResourceException("Airline", "IATA code", request.iataCode());
+        }
+        Airline airline = airlineMapper.toEntity(request);
+        airline.setIataCode(request.iataCode().toUpperCase());
+        return airlineMapper.toResponse(airlineRepository.save(airline));
+    }
+
+    @Transactional
+    public AirlineResponse updateAirline(Long id, AirlineRequest request) {
+        Airline airline = findAirlineById(id);
+        // If IATA code is changing, check for conflicts
+        if (!airline.getIataCode().equals(request.iataCode().toUpperCase())
+                && airlineRepository.existsByIataCode(request.iataCode().toUpperCase())) {
+            throw new DuplicateResourceException("Airline", "IATA code", request.iataCode());
+        }
+        airlineMapper.updateEntity(request, airline);
+        return airlineMapper.toResponse(airlineRepository.save(airline));
+    }
+
+    @Transactional
+    public void deleteAirline(Long id) {
+        if (!airlineRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Airline", id);
+        }
+        airlineRepository.deleteById(id);
+    }
+
+    // Internal helper — used by other services in this module
+    public Airline findAirlineById(Long id) {
+        return airlineRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Airline", id));
+    }
+}

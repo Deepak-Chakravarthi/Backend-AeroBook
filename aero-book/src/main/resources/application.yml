@@ -1,0 +1,19 @@
+spring:
+  liquibase:
+    enabled: false
+    change-log: classpath:changelog/changelog-master.xml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/aerobook
+    username: postgres
+    password: admin@123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    show-sql: false
+    properties:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8091
