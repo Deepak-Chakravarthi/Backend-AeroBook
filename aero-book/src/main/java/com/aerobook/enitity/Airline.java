@@ -16,7 +16,11 @@ import java.util.List;
         @UniqueConstraint(columnNames = "iata_code")
 })
 @EntityListeners(AuditingEntityListener.class)
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Airline {
 
     @Id

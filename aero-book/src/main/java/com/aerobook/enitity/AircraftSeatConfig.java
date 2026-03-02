@@ -9,7 +9,11 @@ import lombok.*;
 @Table(name = "aircraft_seat_config", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"aircraft_id", "seat_class"})
 })
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AircraftSeatConfig {
 
     @Id

@@ -15,7 +15,11 @@ import java.util.List;
 @Entity
 @Table(name = "aircraft")
 @EntityListeners(AuditingEntityListener.class)
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Aircraft {
 
     @Id

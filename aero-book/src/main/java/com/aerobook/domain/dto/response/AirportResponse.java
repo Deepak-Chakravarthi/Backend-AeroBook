@@ -10,4 +10,5 @@ public record AirportResponse(
         String timezone,
         Double latitude,
         Double longitude
-) {}
+) {
+}

@@ -1,21 +1,21 @@
 package com.aerobook.service;
 
-import com.aerobook.enitity.Aircraft;
-import com.aerobook.enitity.AircraftSeatConfig;
 import com.aerobook.domain.dto.request.AircraftSeatConfigRequest;
 import com.aerobook.domain.dto.response.AircraftSeatConfigResponse;
+import com.aerobook.enitity.Aircraft;
+import com.aerobook.enitity.AircraftSeatConfig;
 import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AircraftSeatConfigMapper;
 import com.aerobook.repository.AircraftSeatConfigRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Transactional(readOnly = true)
 public class AircraftSeatConfigService {
 

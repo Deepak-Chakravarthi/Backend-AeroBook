@@ -17,4 +17,5 @@ public record RouteRequest(
 
         @NotNull
         RouteStatus status
-) {}
+) {
+}

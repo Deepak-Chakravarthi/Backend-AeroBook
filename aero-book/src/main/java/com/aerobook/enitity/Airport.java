@@ -13,7 +13,11 @@ import java.time.LocalDateTime;
         @UniqueConstraint(columnNames = "iata_code")
 })
 @EntityListeners(AuditingEntityListener.class)
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Airport {
 
     @Id

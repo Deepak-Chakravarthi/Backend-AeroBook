@@ -10,4 +10,5 @@ public record RouteResponse(
         Integer distanceKm,
         Integer estimatedDurationMinutes,
         RouteStatus status
-) {}
+) {
+}

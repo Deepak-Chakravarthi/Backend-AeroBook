@@ -24,4 +24,5 @@ public record AircraftRequest(
 
         @NotNull(message = "Airline ID is required")
         Long airlineId
-) {}
+) {
+}

@@ -2,6 +2,7 @@ package com.aerobook.domain.dto.response;
 
 
 import com.aerobook.domain.enums.AircraftStatus;
+
 import java.util.List;
 
 public record AircraftResponse(
@@ -14,4 +15,5 @@ public record AircraftResponse(
         Long airlineId,
         String airlineName,
         List<AircraftSeatConfigResponse> seatConfigs
-) {}
+) {
+}

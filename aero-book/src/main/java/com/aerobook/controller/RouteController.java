@@ -5,6 +5,7 @@ import com.aerobook.domain.dto.request.RouteRequest;
 import com.aerobook.domain.dto.response.RouteResponse;
 import com.aerobook.service.RouteService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/routes")
-@RequiredArgsConstructor
+@RequestMapping("/routes")
+@AllArgsConstructor
 public class RouteController {
 
     private final RouteService routeService;

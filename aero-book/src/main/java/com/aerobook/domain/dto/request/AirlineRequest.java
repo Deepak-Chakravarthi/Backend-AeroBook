@@ -23,4 +23,5 @@ public record AirlineRequest(
 
         @NotNull(message = "Status is required")
         AirlineStatus status
-) {}
+) {
+}

@@ -8,6 +8,7 @@ import com.aerobook.domain.dto.response.AircraftSeatConfigResponse;
 import com.aerobook.service.AircraftService;
 import com.aerobook.service.AircraftSeatConfigService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/aircraft")
-@RequiredArgsConstructor
+@RequestMapping("/aircraft")
+@AllArgsConstructor
 public class AircraftController {
 
     private final AircraftService aircraftService;

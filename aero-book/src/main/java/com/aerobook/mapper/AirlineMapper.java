@@ -1,9 +1,9 @@
 package com.aerobook.mapper;
 
 
-import com.aerobook.enitity.Airline;
 import com.aerobook.domain.dto.request.AirlineRequest;
 import com.aerobook.domain.dto.response.AirlineResponse;
+import com.aerobook.enitity.Airline;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = {AircraftMapper.class})

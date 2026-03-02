@@ -1,10 +1,11 @@
 package com.aerobook.mapper;
 
 
-import com.aerobook.enitity.AircraftSeatConfig;
 import com.aerobook.domain.dto.request.AircraftSeatConfigRequest;
 import com.aerobook.domain.dto.response.AircraftSeatConfigResponse;
-import org.mapstruct.*;
+import com.aerobook.enitity.AircraftSeatConfig;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface AircraftSeatConfigMapper {

@@ -2,6 +2,7 @@ package com.aerobook.domain.dto.response;
 
 
 import com.aerobook.domain.enums.AirlineStatus;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,4 +16,5 @@ public record AirlineResponse(
         AirlineStatus status,
         List<AircraftSummaryResponse> aircraft,
         LocalDateTime createdAt
-) {}
+) {
+}

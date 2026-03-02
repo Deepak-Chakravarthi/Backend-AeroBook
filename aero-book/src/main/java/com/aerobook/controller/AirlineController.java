@@ -4,6 +4,7 @@ import com.aerobook.domain.dto.request.AirlineRequest;
 import com.aerobook.domain.dto.response.AirlineResponse;
 import com.aerobook.service.AirlineService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/airlines")
-@RequiredArgsConstructor
+@RequestMapping("/airlines")
+@AllArgsConstructor
 public class AirlineController {
 
     private final AirlineService airlineService;

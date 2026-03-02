@@ -1,21 +1,21 @@
 package com.aerobook.service;
 
-import com.aerobook.enitity.Airline;
 import com.aerobook.domain.dto.request.AirlineRequest;
 import com.aerobook.domain.dto.response.AirlineResponse;
 import com.aerobook.domain.enums.AirlineStatus;
+import com.aerobook.enitity.Airline;
 import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AirlineMapper;
 import com.aerobook.repository.AirlineRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Transactional(readOnly = true)
 public class AirlineService {
 

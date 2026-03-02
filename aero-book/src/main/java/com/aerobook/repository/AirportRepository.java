@@ -9,7 +9,10 @@ import java.util.Optional;
 
 public interface AirportRepository extends JpaRepository<Airport, Long> {
     Optional<Airport> findByIataCode(String iataCode);
+
     boolean existsByIataCode(String iataCode);
+
     List<Airport> findAllByCountry(String country);
+
     List<Airport> findAllByCityContainingIgnoreCase(String city);
 }

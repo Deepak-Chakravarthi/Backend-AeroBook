@@ -15,7 +15,11 @@ import java.time.LocalDateTime;
         @UniqueConstraint(columnNames = {"origin_airport_id", "destination_airport_id"})
 })
 @EntityListeners(AuditingEntityListener.class)
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Route {
 
     @Id
