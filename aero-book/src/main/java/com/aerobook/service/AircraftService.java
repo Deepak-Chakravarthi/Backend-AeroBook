@@ -1,18 +1,20 @@
 package com.aerobook.service;
 
+import com.aerobook.domain.dto.request.AircraftGetRequest;
 import com.aerobook.domain.dto.request.AircraftRequest;
 import com.aerobook.domain.dto.response.AircraftResponse;
+import com.aerobook.domain.enums.AircraftStatus;
 import com.aerobook.enitity.Aircraft;
 import com.aerobook.enitity.Airline;
+import com.aerobook.exception.AeroBookException;
 import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AircraftMapper;
 import com.aerobook.repository.AircraftRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -23,21 +25,44 @@ public class AircraftService {
     private final AircraftMapper aircraftMapper;
     private final AirlineService airlineService;
 
-    public List<AircraftResponse> getAllAircraft() {
-        return aircraftRepository.findAll().stream()
-                .map(aircraftMapper::toResponse)
-                .toList();
+    public Object getAircraft(AircraftGetRequest request) {
+
+        if (request.getId() != null) {
+            return aircraftMapper.toResponse(findAircraftById(request.getId()));
+        }
+
+        if (request.getRegistrationNumber() != null) {
+            Aircraft aircraft = aircraftRepository
+                    .findByRegistrationNumber(request.getRegistrationNumber())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Aircraft", "registrationNumber", request.getRegistrationNumber()));
+            return aircraftMapper.toResponse(aircraft);
+        }
+
+        if (request.getAirlineId() != null) {
+            return aircraftRepository.findAllByAirlineId(request.getAirlineId())
+                    .stream()
+                    .map(aircraftMapper::toResponse)
+                    .toList();
+        }
+
+        if (request.getStatus() != null) {
+            AircraftStatus status = AircraftStatus.parseStatus(request.getStatus());
+            return aircraftRepository.findAllByStatus(status)
+                    .stream()
+                    .map(aircraftMapper::toResponse)
+                    .toList();
+        }
+
+        // Should never reach here — validate() guards this upstream
+        throw new AeroBookException(
+                "No valid search parameter found",
+                HttpStatus.BAD_REQUEST,
+                "INVALID_REQUEST"
+        );
     }
 
-    public List<AircraftResponse> getAircraftByAirline(Long airlineId) {
-        return aircraftRepository.findAllByAirlineId(airlineId).stream()
-                .map(aircraftMapper::toResponse)
-                .toList();
-    }
 
-    public AircraftResponse getAircraftById(Long id) {
-        return aircraftMapper.toResponse(findAircraftById(id));
-    }
 
     @Transactional
     public AircraftResponse createAircraft(AircraftRequest request) {

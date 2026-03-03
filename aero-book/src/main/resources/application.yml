@@ -1,7 +1,4 @@
 spring:
-  liquibase:
-    enabled: false
-    change-log: classpath:changelog/changelog-master.xml
   datasource:
     url: jdbc:postgresql://localhost:5432/aerobook
     username: postgres

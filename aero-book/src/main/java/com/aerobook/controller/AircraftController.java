@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 
+import com.aerobook.domain.dto.request.AircraftGetRequest;
 import com.aerobook.domain.dto.request.AircraftRequest;
 import com.aerobook.domain.dto.request.AircraftSeatConfigRequest;
 import com.aerobook.domain.dto.response.AircraftResponse;
@@ -24,19 +25,30 @@ public class AircraftController {
     private final AircraftService aircraftService;
     private final AircraftSeatConfigService seatConfigService;
 
+    /**
+     * GET /api/v1/aircraft?id=1
+     * GET /api/v1/aircraft?registrationNumber=VT-ANB
+     * GET /api/v1/aircraft?airlineId=2
+     * GET /api/v1/aircraft?status=ACTIVE
+     * Exactly one param must be passed. All are optional=true at HTTP level,
+     */
     @GetMapping
-    public ResponseEntity<List<AircraftResponse>> getAllAircraft() {
-        return ResponseEntity.ok(aircraftService.getAllAircraft());
-    }
+    public ResponseEntity<?> getAircraft(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String registrationNumber,
+            @RequestParam(required = false) Long airlineId,
+            @RequestParam(required = false) String status) {
 
-    @GetMapping("/{id}")
-    public ResponseEntity<AircraftResponse> getAircraftById(@PathVariable Long id) {
-        return ResponseEntity.ok(aircraftService.getAircraftById(id));
-    }
+        AircraftGetRequest request = AircraftGetRequest.builder()
+                .id(id)
+                .registrationNumber(registrationNumber)
+                .airlineId(airlineId)
+                .status(status)
+                .build();
 
-    @GetMapping("/airline/{airlineId}")
-    public ResponseEntity<List<AircraftResponse>> getAircraftByAirline(@PathVariable Long airlineId) {
-        return ResponseEntity.ok(aircraftService.getAircraftByAirline(airlineId));
+        request.validate();
+
+        return ResponseEntity.ok(aircraftService.getAircraft(request));
     }
 
     @PostMapping
