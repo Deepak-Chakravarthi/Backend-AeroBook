@@ -1,40 +1,47 @@
 package com.aerobook.controller;
 
-
+import com.aerobook.domain.dto.request.RouteGetRequest;
 import com.aerobook.domain.dto.request.RouteRequest;
 import com.aerobook.domain.dto.response.RouteResponse;
 import com.aerobook.service.RouteService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/routes")
-@AllArgsConstructor
+@RequestMapping("/api/v1/routes")
+@RequiredArgsConstructor
 public class RouteController {
 
     private final RouteService routeService;
 
+    /**
+     * GET /api/v1/routes?id=1
+     * GET /api/v1/routes?originCode=DEL
+     * GET /api/v1/routes?destinationCode=BOM
+     * GET /api/v1/routes?status=ACTIVE
+     *
+     * Exactly one param must be passed.
+     */
     @GetMapping
-    public ResponseEntity<List<RouteResponse>> getAllRoutes() {
-        return ResponseEntity.ok(routeService.getAllRoutes());
-    }
+    public ResponseEntity<?> getRoute(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String originCode,
+            @RequestParam(required = false) String destinationCode,
+            @RequestParam(required = false) String status) {
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RouteResponse> getRouteById(@PathVariable Long id) {
-        return ResponseEntity.ok(routeService.getRouteById(id));
-    }
+        RouteGetRequest request = RouteGetRequest.builder()
+                .id(id)
+                .originCode(originCode)
+                .destinationCode(destinationCode)
+                .status(status)
+                .build();
 
-    @GetMapping("/search")
-    public ResponseEntity<RouteResponse> getRouteByAirportCodes(
-            @RequestParam String origin,
-            @RequestParam String destination) {
-        return ResponseEntity.ok(routeService.getRouteByAirportCodes(origin, destination));
+        request.validate();
+
+        return ResponseEntity.ok(routeService.getRoute(request));
     }
 
     @PostMapping

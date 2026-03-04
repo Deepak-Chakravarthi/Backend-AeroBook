@@ -1,42 +1,47 @@
 package com.aerobook.controller;
 
+import com.aerobook.domain.dto.request.AirlineGetRequest;
 import com.aerobook.domain.dto.request.AirlineRequest;
 import com.aerobook.domain.dto.response.AirlineResponse;
 import com.aerobook.service.AirlineService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/airlines")
-@AllArgsConstructor
+@RequestMapping("/api/v1/airlines")
+@RequiredArgsConstructor
 public class AirlineController {
 
     private final AirlineService airlineService;
 
+    /**
+     * GET /api/v1/airlines?id=1
+     * GET /api/v1/airlines?iataCode=AI
+     * GET /api/v1/airlines?status=ACTIVE
+     * GET /api/v1/airlines?country=India
+     *
+     * Exactly one param must be passed.
+     */
     @GetMapping
-    public ResponseEntity<List<AirlineResponse>> getAllAirlines() {
-        return ResponseEntity.ok(airlineService.getAllAirlines());
-    }
+    public ResponseEntity<?> getAirline(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String iataCode,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String country) {
 
-    @GetMapping("/active")
-    public ResponseEntity<List<AirlineResponse>> getActiveAirlines() {
-        return ResponseEntity.ok(airlineService.getActiveAirlines());
-    }
+        AirlineGetRequest request = AirlineGetRequest.builder()
+                .id(id)
+                .iataCode(iataCode)
+                .status(status)
+                .country(country)
+                .build();
 
-    @GetMapping("/{id}")
-    public ResponseEntity<AirlineResponse> getAirlineById(@PathVariable Long id) {
-        return ResponseEntity.ok(airlineService.getAirlineById(id));
-    }
+        request.validate();
 
-    @GetMapping("/iata/{code}")
-    public ResponseEntity<AirlineResponse> getAirlineByIataCode(@PathVariable String code) {
-        return ResponseEntity.ok(airlineService.getAirlineByIataCode(code));
+        return ResponseEntity.ok(airlineService.getAirline(request));
     }
 
     @PostMapping

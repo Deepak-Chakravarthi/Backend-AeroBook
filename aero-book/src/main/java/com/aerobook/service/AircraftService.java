@@ -54,7 +54,6 @@ public class AircraftService {
                     .toList();
         }
 
-        // Should never reach here — validate() guards this upstream
         throw new AeroBookException(
                 "No valid search parameter found",
                 HttpStatus.BAD_REQUEST,

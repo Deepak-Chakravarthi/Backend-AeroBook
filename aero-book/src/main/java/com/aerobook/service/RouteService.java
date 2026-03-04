@@ -1,21 +1,22 @@
 package com.aerobook.service;
 
-import com.aerobook.enitity.Airport;
-import com.aerobook.enitity.Route;
+import com.aerobook.domain.dto.request.RouteGetRequest;
 import com.aerobook.domain.dto.request.RouteRequest;
 import com.aerobook.domain.dto.response.RouteResponse;
+import com.aerobook.domain.enums.RouteStatus;
+import com.aerobook.enitity.Airport;
+import com.aerobook.enitity.Route;
 import com.aerobook.exception.AeroBookException;
 import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.RouteMapper;
 import com.aerobook.repository.RouteRepository;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import static com.aerobook.domain.enums.RouteStatus.parseStatus;
 
 @Service
 @AllArgsConstructor
@@ -26,24 +27,41 @@ public class RouteService {
     private final RouteMapper routeMapper;
     private final AirportService airportService;
 
-    public List<RouteResponse> getAllRoutes() {
-        return routeRepository.findAllActiveRoutesWithAirports().stream()
-                .map(routeMapper::toResponse)
-                .toList();
-    }
+    public Object getRoute(RouteGetRequest request) {
 
-    public RouteResponse getRouteById(Long id) {
-        Route route = routeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Route", id));
-        return routeMapper.toResponse(route);
-    }
+        if (request.getId() != null) {
+            Route route = routeRepository.findById(request.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Route", request.getId()));
+            return routeMapper.toResponse(route);
+        }
 
-    public RouteResponse getRouteByAirportCodes(String originCode, String destinationCode) {
-        Route route = routeRepository.findByOriginCodeAndDestinationCode(
-                        originCode.toUpperCase(), destinationCode.toUpperCase())
-                .orElseThrow(() -> new ResourceNotFoundException("Route",
-                        "airports", originCode + " → " + destinationCode));
-        return routeMapper.toResponse(route);
+        if (request.getOriginCode() != null) {
+            return routeRepository.findAllByOriginIataCode(request.getOriginCode().toUpperCase())
+                    .stream()
+                    .map(routeMapper::toResponse)
+                    .toList();
+        }
+
+        if (request.getDestinationCode() != null) {
+            return routeRepository.findAllByDestinationIataCode(request.getDestinationCode().toUpperCase())
+                    .stream()
+                    .map(routeMapper::toResponse)
+                    .toList();
+        }
+
+        if (request.getStatus() != null) {
+            RouteStatus status = parseStatus(request.getStatus());
+            return routeRepository.findAllByStatus(status)
+                    .stream()
+                    .map(routeMapper::toResponse)
+                    .toList();
+        }
+
+        throw new AeroBookException(
+                "No valid search parameter found",
+                HttpStatus.BAD_REQUEST,
+                "INVALID_REQUEST"
+        );
     }
 
     @Transactional

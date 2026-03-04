@@ -1,37 +1,48 @@
 package com.aerobook.controller;
 
+
+import com.aerobook.domain.dto.request.AirportGetRequest;
 import com.aerobook.domain.dto.request.AirportRequest;
 import com.aerobook.domain.dto.response.AirportResponse;
 import com.aerobook.service.AirportService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/airports")
-@AllArgsConstructor
+@RequestMapping("/api/v1/airports")
+@RequiredArgsConstructor
 public class AirportController {
 
     private final AirportService airportService;
 
+    /**
+     * GET /api/v1/airports?id=1
+     * GET /api/v1/airports?iataCode=DEL
+     * GET /api/v1/airports?city=Mumbai
+     * GET /api/v1/airports?country=India
+     *
+     * Exactly one param must be passed.
+     */
     @GetMapping
-    public ResponseEntity<List<AirportResponse>> getAllAirports() {
-        return ResponseEntity.ok(airportService.getAllAirports());
-    }
+    public ResponseEntity<?> getAirport(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String iataCode,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String country) {
 
-    @GetMapping("/{id}")
-    public ResponseEntity<AirportResponse> getAirportById(@PathVariable Long id) {
-        return ResponseEntity.ok(airportService.getAirportById(id));
-    }
+        AirportGetRequest request = AirportGetRequest.builder()
+                .id(id)
+                .iataCode(iataCode)
+                .city(city)
+                .country(country)
+                .build();
 
-    @GetMapping("/iata/{code}")
-    public ResponseEntity<AirportResponse> getAirportByIataCode(@PathVariable String code) {
-        return ResponseEntity.ok(airportService.getAirportByIataCode(code));
+        request.validate();
+
+        return ResponseEntity.ok(airportService.getAirport(request));
     }
 
     @PostMapping
