@@ -46,8 +46,6 @@ public class AircraftController {
                 .status(status)
                 .build();
 
-        request.validate();
-
         return ResponseEntity.ok(aircraftService.getAircraft(request));
     }
 

@@ -1,9 +1,11 @@
 package com.aerobook.domain.dto.request;
 
+import com.aerobook.domain.enums.AirlineStatus;
+import com.aerobook.enitity.Airline;
+import com.aerobook.util.Jpa.SpecificationBuilder;
 import lombok.Builder;
 import lombok.Getter;
-
-import static com.aerobook.util.StreamUtils.countNonNull;
+import org.springframework.data.jpa.domain.Specification;
 
 @Getter
 @Builder
@@ -11,21 +13,20 @@ public class AirlineGetRequest {
 
     private final Long id;
     private final String iataCode;
-    private final String status;
+    private final String icaoCode;
+    private final String name;
     private final String country;
+    private final String status;
 
-    /**
-     * Validates that exactly one search parameter is provided.
-     * Called before passing to service layer.
-     */
-    public void validate() {
-
-        long filledCount = countNonNull(id, iataCode, status, country);
-
-        if (filledCount > 1) {
-            throw new IllegalArgumentException(
-                    "Only one search parameter is allowed at a time. Provided " + filledCount + " parameters."
-            );
-        }
+    public Specification<Airline> toSpecification() {
+        return SpecificationBuilder.<Airline>builder()
+                .addEquals("id", id)
+                .addEquals("iataCode", iataCode != null ? iataCode.toUpperCase() : null)
+                .addEquals("icaoCode", icaoCode != null ? icaoCode.toUpperCase() : null)
+                .addLike("name", name)
+                .addLike("country", country)
+                .addEnumEquals("status", status, AirlineStatus.class)
+                .build();
     }
+
 }

@@ -3,15 +3,12 @@ package com.aerobook.service;
 import com.aerobook.domain.dto.request.AirlineGetRequest;
 import com.aerobook.domain.dto.request.AirlineRequest;
 import com.aerobook.domain.dto.response.AirlineResponse;
-import com.aerobook.domain.enums.AirlineStatus;
 import com.aerobook.enitity.Airline;
-import com.aerobook.exception.AeroBookException;
 import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AirlineMapper;
 import com.aerobook.repository.AirlineRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,39 +22,11 @@ public class AirlineService {
     private final AirlineRepository airlineRepository;
     private final AirlineMapper airlineMapper;
 
-    public Object getAirline(AirlineGetRequest request) {
-
-        if (request.getId() != null) {
-            return airlineMapper.toResponse(findAirlineById(request.getId()));
-        }
-
-        if (request.getIataCode() != null) {
-            Airline airline = airlineRepository.findByIataCode(request.getIataCode().toUpperCase())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Airline", "iataCode", request.getIataCode()));
-            return airlineMapper.toResponse(airline);
-        }
-
-        if (request.getStatus() != null) {
-            AirlineStatus status = AirlineStatus.parseStatus(request.getStatus());
-            return airlineRepository.findAllByStatus(status)
-                    .stream()
-                    .map(airlineMapper::toResponse)
-                    .toList();
-        }
-
-        if (request.getCountry() != null) {
-            return airlineRepository.findAllByCountryIgnoreCase(request.getCountry())
-                    .stream()
-                    .map(airlineMapper::toResponse)
-                    .toList();
-        }
-
-        throw new AeroBookException(
-                "No valid search parameter found",
-                HttpStatus.BAD_REQUEST,
-                "INVALID_REQUEST"
-        );
+    public List<AirlineResponse> getAirlines(AirlineGetRequest request) {
+        return airlineRepository.findAll(request.toSpecification())
+                .stream()
+                .map(airlineMapper::toResponse)
+                .toList();
     }
 
     @Transactional

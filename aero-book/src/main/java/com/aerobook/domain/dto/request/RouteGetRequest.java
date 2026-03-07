@@ -1,10 +1,12 @@
 package com.aerobook.domain.dto.request;
 
 
+import com.aerobook.domain.enums.RouteStatus;
+import com.aerobook.enitity.Route;
+import com.aerobook.util.Jpa.SpecificationBuilder;
 import lombok.Builder;
 import lombok.Getter;
-
-import static com.aerobook.util.StreamUtils.countNonNull;
+import org.springframework.data.jpa.domain.Specification;
 
 @Getter
 @Builder
@@ -15,18 +17,14 @@ public class RouteGetRequest {
     private final String destinationCode;
     private final String status;
 
-     /**
-     * Validates that exactly one search parameter is provided.
-     * Called before passing to service layer.
-     */
-    public void validate() {
-
-        long filledCount = countNonNull(id, originCode, status, status);
-
-        if (filledCount > 1) {
-            throw new IllegalArgumentException(
-                    "Only one search parameter is allowed at a time. Provided " + filledCount + " parameters."
-            );
-        }
+    public Specification<Route> toSpecification() {
+        return SpecificationBuilder.<Route>builder()
+                .addEquals("id", id)
+                .addJoinEquals("origin", "iataCode",
+                        originCode != null ? originCode.toUpperCase() : null)
+                .addJoinEquals("destination", "iataCode",
+                        destinationCode != null ? destinationCode.toUpperCase() : null)
+                .addEnumEquals("status", status, RouteStatus.class)
+                .build();
     }
 }

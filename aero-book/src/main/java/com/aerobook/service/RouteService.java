@@ -3,7 +3,6 @@ package com.aerobook.service;
 import com.aerobook.domain.dto.request.RouteGetRequest;
 import com.aerobook.domain.dto.request.RouteRequest;
 import com.aerobook.domain.dto.response.RouteResponse;
-import com.aerobook.domain.enums.RouteStatus;
 import com.aerobook.enitity.Airport;
 import com.aerobook.enitity.Route;
 import com.aerobook.exception.AeroBookException;
@@ -16,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.aerobook.domain.enums.RouteStatus.parseStatus;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -27,41 +26,11 @@ public class RouteService {
     private final RouteMapper routeMapper;
     private final AirportService airportService;
 
-    public Object getRoute(RouteGetRequest request) {
-
-        if (request.getId() != null) {
-            Route route = routeRepository.findById(request.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Route", request.getId()));
-            return routeMapper.toResponse(route);
-        }
-
-        if (request.getOriginCode() != null) {
-            return routeRepository.findAllByOriginIataCode(request.getOriginCode().toUpperCase())
-                    .stream()
-                    .map(routeMapper::toResponse)
-                    .toList();
-        }
-
-        if (request.getDestinationCode() != null) {
-            return routeRepository.findAllByDestinationIataCode(request.getDestinationCode().toUpperCase())
-                    .stream()
-                    .map(routeMapper::toResponse)
-                    .toList();
-        }
-
-        if (request.getStatus() != null) {
-            RouteStatus status = parseStatus(request.getStatus());
-            return routeRepository.findAllByStatus(status)
-                    .stream()
-                    .map(routeMapper::toResponse)
-                    .toList();
-        }
-
-        throw new AeroBookException(
-                "No valid search parameter found",
-                HttpStatus.BAD_REQUEST,
-                "INVALID_REQUEST"
-        );
+    public List<RouteResponse> getRoutes(RouteGetRequest request) {
+        return routeRepository.findAll(request.toSpecification())
+                .stream()
+                .map(routeMapper::toResponse)
+                .toList();
     }
 
     @Transactional

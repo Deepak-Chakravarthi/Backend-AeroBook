@@ -1,4 +1,4 @@
-package com.aerobook.util;
+package com.aerobook.util.stream;
 
 import lombok.NoArgsConstructor;
 

@@ -39,9 +39,7 @@ public class RouteController {
                 .status(status)
                 .build();
 
-        request.validate();
-
-        return ResponseEntity.ok(routeService.getRoute(request));
+        return ResponseEntity.ok(routeService.getRoutes(request));
     }
 
     @PostMapping

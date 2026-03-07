@@ -2,17 +2,14 @@ package com.aerobook.service;
 
 
 import com.aerobook.domain.dto.request.AirportGetRequest;
-import com.aerobook.enitity.Airport;
 import com.aerobook.domain.dto.request.AirportRequest;
 import com.aerobook.domain.dto.response.AirportResponse;
-import com.aerobook.exception.AeroBookException;
+import com.aerobook.enitity.Airport;
 import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AirportMapper;
 import com.aerobook.repository.AirportRepository;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,38 +23,11 @@ public class AirportService {
     private final AirportRepository airportRepository;
     private final AirportMapper airportMapper;
 
-    public Object getAirport(AirportGetRequest request) {
-
-        if (request.getId() != null) {
-            return airportMapper.toResponse(findAirportById(request.getId()));
-        }
-
-        if (request.getIataCode() != null) {
-            Airport airport = airportRepository.findByIataCode(request.getIataCode().toUpperCase())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Airport", "iataCode", request.getIataCode()));
-            return airportMapper.toResponse(airport);
-        }
-
-        if (request.getCity() != null) {
-            return airportRepository.findAllByCityContainingIgnoreCase(request.getCity())
-                    .stream()
-                    .map(airportMapper::toResponse)
-                    .toList();
-        }
-
-        if (request.getCountry() != null) {
-            return airportRepository.findAllByCountry(request.getCountry())
-                    .stream()
-                    .map(airportMapper::toResponse)
-                    .toList();
-        }
-
-        throw new AeroBookException(
-                "No valid search parameter found",
-                HttpStatus.BAD_REQUEST,
-                "INVALID_REQUEST"
-        );
+    public List<AirportResponse> getAirports(AirportGetRequest request) {
+        return airportRepository.findAll(request.toSpecification())
+                .stream()
+                .map(airportMapper::toResponse)
+                .toList();
     }
 
     @Transactional

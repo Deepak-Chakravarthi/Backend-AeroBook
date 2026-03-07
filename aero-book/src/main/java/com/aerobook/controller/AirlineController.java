@@ -39,9 +39,7 @@ public class AirlineController {
                 .country(country)
                 .build();
 
-        request.validate();
-
-        return ResponseEntity.ok(airlineService.getAirline(request));
+        return ResponseEntity.ok(airlineService.getAirlines(request));
     }
 
     @PostMapping

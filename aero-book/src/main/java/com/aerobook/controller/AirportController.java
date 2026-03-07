@@ -23,7 +23,7 @@ public class AirportController {
      * GET /api/v1/airports?iataCode=DEL
      * GET /api/v1/airports?city=Mumbai
      * GET /api/v1/airports?country=India
-     *
+     * <p>
      * Exactly one param must be passed.
      */
     @GetMapping
@@ -40,9 +40,7 @@ public class AirportController {
                 .country(country)
                 .build();
 
-        request.validate();
-
-        return ResponseEntity.ok(airportService.getAirport(request));
+        return ResponseEntity.ok(airportService.getAirports(request));
     }
 
     @PostMapping
