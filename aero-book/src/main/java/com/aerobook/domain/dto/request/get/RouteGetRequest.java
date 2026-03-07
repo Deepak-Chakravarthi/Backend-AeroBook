@@ -1,4 +1,4 @@
-package com.aerobook.domain.dto.request;
+package com.aerobook.domain.dto.request.get;
 
 
 import com.aerobook.domain.enums.RouteStatus;

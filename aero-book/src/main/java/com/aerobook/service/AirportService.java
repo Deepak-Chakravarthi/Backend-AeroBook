@@ -1,7 +1,7 @@
 package com.aerobook.service;
 
 
-import com.aerobook.domain.dto.request.AirportGetRequest;
+import com.aerobook.domain.dto.request.get.AirportGetRequest;
 import com.aerobook.domain.dto.request.AirportRequest;
 import com.aerobook.domain.dto.response.AirportResponse;
 import com.aerobook.enitity.Airport;
@@ -10,6 +10,7 @@ import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AirportMapper;
 import com.aerobook.repository.AirportRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,7 @@ public class AirportService {
     private final AirportRepository airportRepository;
     private final AirportMapper airportMapper;
 
-    public List<AirportResponse> getAirports(AirportGetRequest request) {
+    public List<AirportResponse> getAirports(AirportGetRequest request, Pageable pageable) {
         return airportRepository.findAll(request.toSpecification())
                 .stream()
                 .map(airportMapper::toResponse)

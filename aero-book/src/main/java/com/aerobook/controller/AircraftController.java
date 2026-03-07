@@ -1,7 +1,7 @@
 package com.aerobook.controller;
 
 
-import com.aerobook.domain.dto.request.AircraftGetRequest;
+import com.aerobook.domain.dto.request.get.AircraftGetRequest;
 import com.aerobook.domain.dto.request.AircraftRequest;
 import com.aerobook.domain.dto.request.AircraftSeatConfigRequest;
 import com.aerobook.domain.dto.response.AircraftResponse;
@@ -10,7 +10,7 @@ import com.aerobook.service.AircraftService;
 import com.aerobook.service.AircraftSeatConfigService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +37,9 @@ public class AircraftController {
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String registrationNumber,
             @RequestParam(required = false) Long airlineId,
-            @RequestParam(required = false) String status) {
+            @RequestParam(required = false) String status,
+            Pageable pageable) {
+
 
         AircraftGetRequest request = AircraftGetRequest.builder()
                 .id(id)
@@ -46,7 +48,7 @@ public class AircraftController {
                 .status(status)
                 .build();
 
-        return ResponseEntity.ok(aircraftService.getAircraft(request));
+        return ResponseEntity.ok(aircraftService.getAircraft(request,pageable));
     }
 
     @PostMapping

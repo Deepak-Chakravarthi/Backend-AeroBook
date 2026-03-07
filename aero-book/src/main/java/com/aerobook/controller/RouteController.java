@@ -1,11 +1,12 @@
 package com.aerobook.controller;
 
-import com.aerobook.domain.dto.request.RouteGetRequest;
+import com.aerobook.domain.dto.request.get.RouteGetRequest;
 import com.aerobook.domain.dto.request.RouteRequest;
 import com.aerobook.domain.dto.response.RouteResponse;
 import com.aerobook.service.RouteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,9 @@ public class RouteController {
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String originCode,
             @RequestParam(required = false) String destinationCode,
-            @RequestParam(required = false) String status) {
+            @RequestParam(required = false) String status,
+            Pageable pageable
+            ) {
 
         RouteGetRequest request = RouteGetRequest.builder()
                 .id(id)
@@ -39,7 +42,7 @@ public class RouteController {
                 .status(status)
                 .build();
 
-        return ResponseEntity.ok(routeService.getRoutes(request));
+        return ResponseEntity.ok(routeService.getRoutes(request,pageable));
     }
 
     @PostMapping

@@ -1,6 +1,6 @@
 package com.aerobook.service;
 
-import com.aerobook.domain.dto.request.AirlineGetRequest;
+import com.aerobook.domain.dto.request.get.AirlineGetRequest;
 import com.aerobook.domain.dto.request.AirlineRequest;
 import com.aerobook.domain.dto.response.AirlineResponse;
 import com.aerobook.enitity.Airline;
@@ -9,6 +9,7 @@ import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AirlineMapper;
 import com.aerobook.repository.AirlineRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,7 @@ public class AirlineService {
     private final AirlineRepository airlineRepository;
     private final AirlineMapper airlineMapper;
 
-    public List<AirlineResponse> getAirlines(AirlineGetRequest request) {
+    public List<AirlineResponse> getAirlines(AirlineGetRequest request, Pageable pageable   ) {
         return airlineRepository.findAll(request.toSpecification())
                 .stream()
                 .map(airlineMapper::toResponse)

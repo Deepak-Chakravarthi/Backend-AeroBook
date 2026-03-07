@@ -1,12 +1,13 @@
 package com.aerobook.controller;
 
 
-import com.aerobook.domain.dto.request.AirportGetRequest;
+import com.aerobook.domain.dto.request.get.AirportGetRequest;
 import com.aerobook.domain.dto.request.AirportRequest;
 import com.aerobook.domain.dto.response.AirportResponse;
 import com.aerobook.service.AirportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,8 @@ public class AirportController {
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String iataCode,
             @RequestParam(required = false) String city,
-            @RequestParam(required = false) String country) {
+            @RequestParam(required = false) String country,
+            Pageable pageable) {
 
         AirportGetRequest request = AirportGetRequest.builder()
                 .id(id)
@@ -40,7 +42,7 @@ public class AirportController {
                 .country(country)
                 .build();
 
-        return ResponseEntity.ok(airportService.getAirports(request));
+        return ResponseEntity.ok(airportService.getAirports(request,pageable));
     }
 
     @PostMapping

@@ -1,6 +1,6 @@
 package com.aerobook.service;
 
-import com.aerobook.domain.dto.request.AircraftGetRequest;
+import com.aerobook.domain.dto.request.get.AircraftGetRequest;
 import com.aerobook.domain.dto.request.AircraftRequest;
 import com.aerobook.domain.dto.response.AircraftResponse;
 import com.aerobook.enitity.Aircraft;
@@ -10,22 +10,28 @@ import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AircraftMapper;
 import com.aerobook.repository.AircraftRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class AircraftService {
 
     private final AircraftRepository aircraftRepository;
     private final AircraftMapper aircraftMapper;
     private final AirlineService airlineService;
 
-    public List<AircraftResponse> getAircraft(AircraftGetRequest request) {
-        return aircraftRepository.findAll(request.toSpecification())
+    public List<AircraftResponse> getAircraft(AircraftGetRequest request, Pageable pageable) {
+        log.info("{},{}",pageable.getPageNumber(),pageable.getPageSize());
+        return aircraftRepository.findAll(request.toSpecification(),pageable)
                 .stream()
                 .map(aircraftMapper::toResponse)
                 .toList();

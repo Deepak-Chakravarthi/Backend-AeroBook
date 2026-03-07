@@ -1,6 +1,6 @@
 package com.aerobook.service;
 
-import com.aerobook.domain.dto.request.RouteGetRequest;
+import com.aerobook.domain.dto.request.get.RouteGetRequest;
 import com.aerobook.domain.dto.request.RouteRequest;
 import com.aerobook.domain.dto.response.RouteResponse;
 import com.aerobook.enitity.Airport;
@@ -11,6 +11,7 @@ import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.RouteMapper;
 import com.aerobook.repository.RouteRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class RouteService {
     private final RouteMapper routeMapper;
     private final AirportService airportService;
 
-    public List<RouteResponse> getRoutes(RouteGetRequest request) {
+    public List<RouteResponse> getRoutes(RouteGetRequest request, Pageable pageable) {
         return routeRepository.findAll(request.toSpecification())
                 .stream()
                 .map(routeMapper::toResponse)
