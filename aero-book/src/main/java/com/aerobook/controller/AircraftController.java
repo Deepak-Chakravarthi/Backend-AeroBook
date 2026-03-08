@@ -60,7 +60,6 @@ public class AircraftController {
         return ResponseEntity.noContent().build();
     }
 
-    // Seat config endpoints nested under aircraft
     @GetMapping("/{aircraftId}/seat-configs")
     public ResponseEntity<List<AircraftSeatConfigResponse>> getSeatConfigs(@PathVariable Long aircraftId) {
         return ResponseEntity.ok(seatConfigService.getSeatConfigsByAircraft(aircraftId));

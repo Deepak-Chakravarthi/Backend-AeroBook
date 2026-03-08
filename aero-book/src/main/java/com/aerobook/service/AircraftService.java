@@ -9,8 +9,9 @@ import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AircraftMapper;
 import com.aerobook.repository.AircraftRepository;
+import com.aerobook.service.query.AircraftQueryService;
+import com.aerobook.service.query.AirlineQueryService;
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @Service
 @AllArgsConstructor
@@ -38,7 +38,6 @@ public class AircraftService {
     }
 
     @Transactional
-    @CacheEvict(value = "aircraftRegistration", key = "#request.registrationNumber")
     public AircraftResponse createAircraft(AircraftRequest request) {
         if (aircraftQueryService.existsByRegistrationNumber(request.getRegistrationNumber())) {
             throw new DuplicateResourceException("Aircraft", "registration number", request.getRegistrationNumber());
@@ -48,7 +47,6 @@ public class AircraftService {
         aircraft.setAirline(airline);
         return aircraftMapper.toResponse(aircraftRepository.save(aircraft));
     }
-
     @Transactional
     @CacheEvict(value = {"aircraft", "aircraftRegistration"}, key = "#id")
     public AircraftResponse updateAircraft(Long id, AircraftRequest request) {

@@ -19,7 +19,8 @@ public class CacheConfiguration {
         CaffeineCacheManager manager = new CaffeineCacheManager(
                 "aircraft",
                 "airline",
-                "aircraftRegistration"
+                "aircraftRegistration",
+                "airport"
         );
 
         manager.setCaffeine(

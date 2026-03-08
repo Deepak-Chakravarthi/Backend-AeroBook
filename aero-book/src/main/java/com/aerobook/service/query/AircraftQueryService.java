@@ -1,4 +1,4 @@
-package com.aerobook.service;
+package com.aerobook.service.query;
 
 import com.aerobook.enitity.Aircraft;
 import com.aerobook.exception.ResourceNotFoundException;

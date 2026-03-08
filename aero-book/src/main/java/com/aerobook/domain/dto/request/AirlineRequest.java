@@ -3,7 +3,7 @@ package com.aerobook.domain.dto.request;
 
 import com.aerobook.domain.enums.AirlineStatus;
 import com.aerobook.exception.DuplicateResourceException;
-import com.aerobook.service.AirlineQueryService;
+import com.aerobook.service.query.AirlineQueryService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

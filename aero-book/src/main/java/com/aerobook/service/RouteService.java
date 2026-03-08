@@ -10,6 +10,7 @@ import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.RouteMapper;
 import com.aerobook.repository.RouteRepository;
+import com.aerobook.service.query.AirportQueryService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class RouteService {
     private final RouteRepository routeRepository;
     private final RouteMapper routeMapper;
     private final AirportService airportService;
+    private final AirportQueryService airportQueryService;
 
     public List<RouteResponse> getRoutes(RouteGetRequest request, Pageable pageable) {
         return routeRepository.findAll(request.toSpecification(), pageable)
@@ -44,8 +46,8 @@ public class RouteService {
             throw new DuplicateResourceException("Route", "origin→destination",
                     request.originAirportId() + "→" + request.destinationAirportId());
         }
-        Airport origin = airportService.findAirportById(request.originAirportId());
-        Airport destination = airportService.findAirportById(request.destinationAirportId());
+        Airport origin = airportQueryService.findAirportById(request.originAirportId());
+        Airport destination = airportQueryService.findAirportById(request.destinationAirportId());
         Route route = routeMapper.toEntity(request);
         route.setOrigin(origin);
         route.setDestination(destination);
@@ -56,8 +58,8 @@ public class RouteService {
     public RouteResponse updateRoute(Long id, RouteRequest request) {
         Route route = routeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Route", id));
-        Airport origin = airportService.findAirportById(request.originAirportId());
-        Airport destination = airportService.findAirportById(request.destinationAirportId());
+        Airport origin = airportQueryService.findAirportById(request.originAirportId());
+        Airport destination = airportQueryService.findAirportById(request.destinationAirportId());
         routeMapper.updateEntity(request, route);
         route.setOrigin(origin);
         route.setDestination(destination);

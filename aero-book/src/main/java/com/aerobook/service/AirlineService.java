@@ -8,6 +8,7 @@ import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AirlineMapper;
 import com.aerobook.repository.AirlineRepository;
+import com.aerobook.service.query.AirlineQueryService;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Pageable;

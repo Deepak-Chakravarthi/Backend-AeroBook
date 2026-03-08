@@ -8,6 +8,7 @@ import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AircraftSeatConfigMapper;
 import com.aerobook.repository.AircraftSeatConfigRepository;
+import com.aerobook.service.query.AircraftQueryService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,6 @@ public class AircraftSeatConfigService {
 
     private final AircraftSeatConfigRepository seatConfigRepository;
     private final AircraftSeatConfigMapper seatConfigMapper;
-    private final AircraftService aircraftService;
     private final AircraftQueryService aircraftQueryService;
 
     public List<AircraftSeatConfigResponse> getSeatConfigsByAircraft(Long aircraftId) {

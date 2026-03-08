@@ -2,7 +2,7 @@ package com.aerobook.domain.dto.request;
 
 import com.aerobook.domain.enums.AircraftStatus;
 import com.aerobook.exception.DuplicateResourceException;
-import com.aerobook.service.AircraftQueryService;
+import com.aerobook.service.query.AircraftQueryService;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
