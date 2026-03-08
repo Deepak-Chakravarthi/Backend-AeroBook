@@ -12,6 +12,7 @@ import com.aerobook.repository.AircraftRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,39 +28,41 @@ public class AircraftService {
 
     private final AircraftRepository aircraftRepository;
     private final AircraftMapper aircraftMapper;
-    private final AirlineService airlineService;
+    private final AircraftQueryService aircraftQueryService;
+    private final AirlineQueryService airlineQueryService;
 
     public List<AircraftResponse> getAircraft(AircraftGetRequest request, Pageable pageable) {
-        log.info("{},{}",pageable.getPageNumber(),pageable.getPageSize());
         return aircraftRepository.findAll(request.toSpecification(),pageable)
-                .stream()
                 .map(aircraftMapper::toResponse)
                 .toList();
     }
 
-
     @Transactional
+    @CacheEvict(value = "aircraftRegistration", key = "#request.registrationNumber")
     public AircraftResponse createAircraft(AircraftRequest request) {
-        if (aircraftRepository.existsByRegistrationNumber(request.registrationNumber())) {
-            throw new DuplicateResourceException("Aircraft", "registration number", request.registrationNumber());
+        if (aircraftQueryService.existsByRegistrationNumber(request.getRegistrationNumber())) {
+            throw new DuplicateResourceException("Aircraft", "registration number", request.getRegistrationNumber());
         }
-        Airline airline = airlineService.findAirlineById(request.airlineId());
+        Airline airline = airlineQueryService.findAirlineById(request.getAirlineId());
         Aircraft aircraft = aircraftMapper.toEntity(request);
         aircraft.setAirline(airline);
         return aircraftMapper.toResponse(aircraftRepository.save(aircraft));
     }
 
     @Transactional
+    @CacheEvict(value = {"aircraft", "aircraftRegistration"}, key = "#id")
     public AircraftResponse updateAircraft(Long id, AircraftRequest request) {
-        Aircraft aircraft = findAircraftById(id);
-        if (!aircraft.getRegistrationNumber().equals(request.registrationNumber())
-                && aircraftRepository.existsByRegistrationNumber(request.registrationNumber())) {
-            throw new DuplicateResourceException("Aircraft", "registration number", request.registrationNumber());
-        }
-        Airline airline = airlineService.findAirlineById(request.airlineId());
+
+        Aircraft aircraft = aircraftQueryService.findAircraftById(id);
+
+        request.validateRegistrationUpdate(
+                aircraft.getRegistrationNumber(),
+                request.getRegistrationNumber()
+        );
+        Airline airline = airlineQueryService.findAirlineById(request.getAirlineId());
         aircraftMapper.updateEntity(request, aircraft);
         aircraft.setAirline(airline);
-        return aircraftMapper.toResponse(aircraftRepository.save(aircraft));
+        return aircraftMapper.toResponse(aircraft);
     }
 
     @Transactional
@@ -68,10 +71,5 @@ public class AircraftService {
             throw new ResourceNotFoundException("Aircraft", id);
         }
         aircraftRepository.deleteById(id);
-    }
-
-    public Aircraft findAircraftById(Long id) {
-        return aircraftRepository.findByIdWithSeatConfigs(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Aircraft", id));
     }
 }

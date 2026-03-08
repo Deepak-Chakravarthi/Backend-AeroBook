@@ -1,8 +1,8 @@
 package com.aerobook.service;
 
 
-import com.aerobook.domain.dto.request.get.AirportGetRequest;
 import com.aerobook.domain.dto.request.AirportRequest;
+import com.aerobook.domain.dto.request.get.AirportGetRequest;
 import com.aerobook.domain.dto.response.AirportResponse;
 import com.aerobook.enitity.Airport;
 import com.aerobook.exception.DuplicateResourceException;
@@ -25,8 +25,7 @@ public class AirportService {
     private final AirportMapper airportMapper;
 
     public List<AirportResponse> getAirports(AirportGetRequest request, Pageable pageable) {
-        return airportRepository.findAll(request.toSpecification())
-                .stream()
+        return airportRepository.findAll(request.toSpecification(), pageable)
                 .map(airportMapper::toResponse)
                 .toList();
     }

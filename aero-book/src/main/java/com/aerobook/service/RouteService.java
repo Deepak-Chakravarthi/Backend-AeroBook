@@ -1,7 +1,7 @@
 package com.aerobook.service;
 
-import com.aerobook.domain.dto.request.get.RouteGetRequest;
 import com.aerobook.domain.dto.request.RouteRequest;
+import com.aerobook.domain.dto.request.get.RouteGetRequest;
 import com.aerobook.domain.dto.response.RouteResponse;
 import com.aerobook.enitity.Airport;
 import com.aerobook.enitity.Route;
@@ -28,8 +28,7 @@ public class RouteService {
     private final AirportService airportService;
 
     public List<RouteResponse> getRoutes(RouteGetRequest request, Pageable pageable) {
-        return routeRepository.findAll(request.toSpecification())
-                .stream()
+        return routeRepository.findAll(request.toSpecification(), pageable)
                 .map(routeMapper::toResponse)
                 .toList();
     }

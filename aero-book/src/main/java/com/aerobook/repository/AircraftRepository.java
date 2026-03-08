@@ -14,4 +14,6 @@ public interface AircraftRepository extends JpaRepository<Aircraft, Long>,
 
     @Query("SELECT a FROM Aircraft a JOIN FETCH a.seatConfigs WHERE a.id = :id")
     Optional<Aircraft> findByIdWithSeatConfigs(Long id);
+
+    Optional<Aircraft> findBy(Long id);
 }

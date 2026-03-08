@@ -19,6 +19,7 @@ public class PageableConfiguration implements WebMvcConfigurer {
         PageableHandlerMethodArgumentResolver resolver =
                 new PageableHandlerMethodArgumentResolver();
 
+        // page size and max pageSize can be adjusted based on the business need
         resolver.setFallbackPageable(PageRequest.of(0, 10));
         resolver.setMaxPageSize(100);
         resolvers.add(resolver);

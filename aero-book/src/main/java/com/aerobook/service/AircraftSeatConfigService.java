@@ -22,6 +22,7 @@ public class AircraftSeatConfigService {
     private final AircraftSeatConfigRepository seatConfigRepository;
     private final AircraftSeatConfigMapper seatConfigMapper;
     private final AircraftService aircraftService;
+    private final AircraftQueryService aircraftQueryService;
 
     public List<AircraftSeatConfigResponse> getSeatConfigsByAircraft(Long aircraftId) {
         return seatConfigRepository.findAllByAircraftId(aircraftId).stream()
@@ -31,7 +32,7 @@ public class AircraftSeatConfigService {
 
     @Transactional
     public AircraftSeatConfigResponse addSeatConfig(Long aircraftId, AircraftSeatConfigRequest request) {
-        Aircraft aircraft = aircraftService.findAircraftById(aircraftId);
+        Aircraft aircraft = aircraftQueryService.findAircraftById(aircraftId);
         if (seatConfigRepository.existsByAircraftIdAndSeatClass(aircraftId, request.seatClass())) {
             throw new DuplicateResourceException("SeatConfig", "seat class", request.seatClass().name());
         }

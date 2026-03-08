@@ -25,13 +25,6 @@ public class AircraftController {
     private final AircraftService aircraftService;
     private final AircraftSeatConfigService seatConfigService;
 
-    /**
-     * GET /api/v1/aircraft?id=1
-     * GET /api/v1/aircraft?registrationNumber=VT-ANB
-     * GET /api/v1/aircraft?airlineId=2
-     * GET /api/v1/aircraft?status=ACTIVE
-     * Exactly one param must be passed. All are optional=true at HTTP level,
-     */
     @GetMapping
     public ResponseEntity<?> getAircraft(
             @RequestParam(required = false) Long id,
@@ -39,7 +32,6 @@ public class AircraftController {
             @RequestParam(required = false) Long airlineId,
             @RequestParam(required = false) String status,
             Pageable pageable) {
-
 
         AircraftGetRequest request = AircraftGetRequest.builder()
                 .id(id)
