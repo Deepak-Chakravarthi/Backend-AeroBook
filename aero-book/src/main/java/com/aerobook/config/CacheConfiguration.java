@@ -16,12 +16,7 @@ public class CacheConfiguration {
     @Bean
     public CacheManager cacheManager() {
 
-        CaffeineCacheManager manager = new CaffeineCacheManager(
-                "aircraft",
-                "airline",
-                "aircraftRegistration",
-                "airport"
-        );
+        CaffeineCacheManager manager = new CaffeineCacheManager();
 
         manager.setCaffeine(
                 Caffeine.newBuilder()

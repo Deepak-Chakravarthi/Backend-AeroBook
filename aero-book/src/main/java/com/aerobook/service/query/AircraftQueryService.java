@@ -16,15 +16,9 @@ public class AircraftQueryService {
 
     @Cacheable(value = "aircraft", key = "#id")
     public Aircraft findAircraftById(Long id) {
-
         return aircraftRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Aircraft", "id", id.toString()));
     }
 
-    @Cacheable(value = "aircraftRegistration", key = "#registrationNumber")
-    public boolean existsByRegistrationNumber(String registrationNumber) {
-
-        return aircraftRepository.existsByRegistrationNumber(registrationNumber);
-    }
 }
 

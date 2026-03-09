@@ -19,4 +19,5 @@ public class AirportQueryService {
         return airportRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", id.toString()));
     }
+
 }

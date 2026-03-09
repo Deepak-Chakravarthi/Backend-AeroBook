@@ -2,8 +2,6 @@ package com.aerobook.domain.dto.request;
 
 
 import com.aerobook.domain.enums.AirlineStatus;
-import com.aerobook.exception.DuplicateResourceException;
-import com.aerobook.service.query.AirlineQueryService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,7 +13,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AirlineRequest {
-    private final AirlineQueryService airlineQueryService;
 
     @NotBlank(message = "Airline name is required")
     private String name;
@@ -33,13 +30,4 @@ public class AirlineRequest {
     @NotNull(message = "Status is required")
     private AirlineStatus status;
 
-
-    public void validateIataCodeUpdate(String existing, String newIataCode) {
-
-        if (!existing.equalsIgnoreCase(newIataCode)
-                && airlineQueryService.existsByIataCode(newIataCode)) {
-
-            throw new DuplicateResourceException("Aircraft", "IATA Code", newIataCode);
-        }
-    }
 }

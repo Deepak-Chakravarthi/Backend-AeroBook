@@ -1,8 +1,6 @@
 package com.aerobook.domain.dto.request;
 
 import com.aerobook.domain.enums.AircraftStatus;
-import com.aerobook.exception.DuplicateResourceException;
-import com.aerobook.service.query.AircraftQueryService;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AircraftRequest {
-    private final AircraftQueryService aircraftQueryService;
 
     @NotBlank(message = "Registration number is required")
     private String registrationNumber;
@@ -35,13 +32,4 @@ public class AircraftRequest {
     @NotNull(message = "Airline ID is required")
     private Long airlineId;
 
-
-    public void validateRegistrationUpdate(String existing, String newRegistration) {
-
-        if (!existing.equals(newRegistration)
-                && aircraftQueryService.existsByRegistrationNumber(newRegistration)) {
-
-            throw new DuplicateResourceException("Aircraft", "registration number", newRegistration);
-        }
-    }
 }

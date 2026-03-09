@@ -11,7 +11,7 @@ import com.aerobook.mapper.AirportMapper;
 import com.aerobook.repository.AirportRepository;
 import com.aerobook.service.query.AirportQueryService;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,23 +34,34 @@ public class AirportService {
     }
 
     @Transactional
-    @CacheEvict(value = {"airport"}, key = "#id")
-    public AirportResponse createAirport(AirportRequest request) {
+    @CachePut(value = "airport", key = "#request.id")
+    public Airport createAirportEntity(AirportRequest request) {
         if (airportRepository.existsByIataCode(request.getIataCode().toUpperCase())) {
             throw new DuplicateResourceException("Airport", "IATA code", request.getIataCode());
         }
         Airport airport = airportMapper.toEntity(request);
         airport.setIataCode(request.getIataCode().toUpperCase());
-        return airportMapper.toResponse(airportRepository.save(airport));
+        return airportRepository.save(airport);
+    }
+
+    public AirportResponse createAirport(AirportRequest airportRequest) {
+        Airport airline = createAirportEntity(airportRequest);
+        return airportMapper.toResponse(airline);
     }
 
     @Transactional
-    @CacheEvict(value = {"airport"}, key = "#id")
-    public AirportResponse updateAirport(Long id, AirportRequest request) {
+    @CachePut(value = "airportById", key = "#id")
+    public Airport updateAirportEntity(Long id, AirportRequest request) {
         Airport airport = airportQueryService.findAirportById(id);
         airportMapper.updateEntity(request, airport);
-        return airportMapper.toResponse(airportRepository.save(airport));
+        return airportRepository.save(airport);
     }
+
+    public AirportResponse updateAirport(Long id, AirportRequest airportRequest) {
+        Airport airline = updateAirportEntity(id, airportRequest);
+        return airportMapper.toResponse(airline);
+    }
+
 
     @Transactional
     public void deleteAirport(Long id) {

@@ -1,7 +1,7 @@
 package com.aerobook.service;
 
-import com.aerobook.domain.dto.request.get.AircraftGetRequest;
 import com.aerobook.domain.dto.request.AircraftRequest;
+import com.aerobook.domain.dto.request.get.AircraftGetRequest;
 import com.aerobook.domain.dto.response.AircraftResponse;
 import com.aerobook.enitity.Aircraft;
 import com.aerobook.enitity.Airline;
@@ -13,7 +13,7 @@ import com.aerobook.service.query.AircraftQueryService;
 import com.aerobook.service.query.AirlineQueryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,6 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-@Transactional(readOnly = true)
 @Slf4j
 public class AircraftService {
 
@@ -32,34 +31,47 @@ public class AircraftService {
     private final AirlineQueryService airlineQueryService;
 
     public List<AircraftResponse> getAircraft(AircraftGetRequest request, Pageable pageable) {
-        return aircraftRepository.findAll(request.toSpecification(),pageable)
+        return aircraftRepository.findAll(request.toSpecification(), pageable)
                 .map(aircraftMapper::toResponse)
                 .toList();
     }
 
     @Transactional
-    public AircraftResponse createAircraft(AircraftRequest request) {
-        if (aircraftQueryService.existsByRegistrationNumber(request.getRegistrationNumber())) {
-            throw new DuplicateResourceException("Aircraft", "registration number", request.getRegistrationNumber());
+    @CachePut(value = "aircraft", key = "#result.id")
+    public Aircraft createAircraftEntity(AircraftRequest request) {
+        if (aircraftRepository.existsByRegistrationNumber(request.getRegistrationNumber())) {
+            throw new DuplicateResourceException(
+                    "Aircraft", "registration number", request.getRegistrationNumber());
         }
         Airline airline = airlineQueryService.findAirlineById(request.getAirlineId());
         Aircraft aircraft = aircraftMapper.toEntity(request);
         aircraft.setAirline(airline);
-        return aircraftMapper.toResponse(aircraftRepository.save(aircraft));
+        return aircraftRepository.save(aircraft);
     }
+
+    public AircraftResponse createAircraft(AircraftRequest request) {
+        Aircraft aircraft = createAircraftEntity(request);
+        return aircraftMapper.toResponse(aircraft);
+    }
+
     @Transactional
-    @CacheEvict(value = {"aircraft", "aircraftRegistration"}, key = "#id")
-    public AircraftResponse updateAircraft(Long id, AircraftRequest request) {
+    @CachePut(value = "aircraft", key = "#id")
+    public Aircraft updateAircraftEntity(Long id, AircraftRequest request) {
 
         Aircraft aircraft = aircraftQueryService.findAircraftById(id);
 
-        request.validateRegistrationUpdate(
+        validateRegistrationUpdate(
                 aircraft.getRegistrationNumber(),
                 request.getRegistrationNumber()
         );
         Airline airline = airlineQueryService.findAirlineById(request.getAirlineId());
         aircraftMapper.updateEntity(request, aircraft);
         aircraft.setAirline(airline);
+        return aircraft;
+    }
+
+    public AircraftResponse updateAircraft(Long id, AircraftRequest request) {
+        Aircraft aircraft = updateAircraftEntity(id, request);
         return aircraftMapper.toResponse(aircraft);
     }
 
@@ -69,5 +81,13 @@ public class AircraftService {
             throw new ResourceNotFoundException("Aircraft", id);
         }
         aircraftRepository.deleteById(id);
+    }
+
+    public void validateRegistrationUpdate(String existing, String newRegistration) {
+
+        if (!existing.equals(newRegistration)
+                && aircraftRepository.existsByRegistrationNumber(newRegistration)) {
+            throw new DuplicateResourceException("Aircraft", "registration number", newRegistration);
+        }
     }
 }

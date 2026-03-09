@@ -13,15 +13,10 @@ public class AirlineQueryService {
 
     private final AirlineRepository airlineRepository;
 
-    @Cacheable(value = "airline", key = "#id")
+    @Cacheable(value = "airlineById", key = "#id")
     public Airline findAirlineById(Long id) {
-
         return airlineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Airline", "id", id.toString()));
-    }
-
-    @Cacheable(value = "airline", key = "#iataCode")
-    public boolean existsByIataCode(String iataCode) {
-        return airlineRepository.existsByIataCode(iataCode);
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Airline", "id", id.toString()));
     }
 }

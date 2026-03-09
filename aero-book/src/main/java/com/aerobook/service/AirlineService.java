@@ -10,7 +10,7 @@ import com.aerobook.mapper.AirlineMapper;
 import com.aerobook.repository.AirlineRepository;
 import com.aerobook.service.query.AirlineQueryService;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,28 +33,41 @@ public class AirlineService {
     }
 
     @Transactional
-    @CacheEvict(value = "airline", key = "#request.iataCode.toUpperCase()")
-    public AirlineResponse createAirline(AirlineRequest request) {
+    @CachePut(value = "airline", key = "#request.id")
+    public Airline createAirlineEntity(AirlineRequest request) {
 
         String iataCode = request.getIataCode().toUpperCase();
 
-        if (airlineQueryService.existsByIataCode(iataCode)) {
+        if (airlineRepository.existsByIataCode(iataCode)) {
             throw new DuplicateResourceException("Airline", "IATA code", iataCode);
         }
 
         Airline airline = airlineMapper.toEntity(request);
         airline.setIataCode(iataCode);
-        return airlineMapper.toResponse(airlineRepository.save(airline));
+        return airlineRepository.save(airline);
     }
 
     @Transactional
-    @CacheEvict(value = "airlines", key = "#id")
-    public AirlineResponse updateAirline(Long id, AirlineRequest request) {
+    @CachePut(value = "airlineById", key = "#id")
+    public Airline updateAirlineEnitity(Long id, AirlineRequest request) {
         Airline airline = airlineQueryService.findAirlineById(id);
-        request.validateIataCodeUpdate(airline.getIataCode(), request.getIataCode());
+        validateIataCodeUpdate(
+                airline.getIataCode(),
+                request.getIataCode()
+        );
 
         airlineMapper.updateEntity(request, airline);
-        return airlineMapper.toResponse(airlineRepository.save(airline));
+        return airlineRepository.save(airline);
+    }
+
+    public AirlineResponse createAirline(AirlineRequest request) {
+        Airline airline = createAirlineEntity(request);
+        return airlineMapper.toResponse(airline);
+    }
+
+    public AirlineResponse updateAirline(Long id, AirlineRequest request) {
+        Airline airline = updateAirlineEnitity(id, request);
+        return airlineMapper.toResponse(airline);
     }
 
     @Transactional
@@ -63,5 +76,14 @@ public class AirlineService {
             throw new ResourceNotFoundException("Airline", id);
         }
         airlineRepository.deleteById(id);
+    }
+
+    public void validateIataCodeUpdate(String existing, String newIataCode) {
+
+        if (!existing.equalsIgnoreCase(newIataCode)
+                && airlineRepository.existsByIataCode(newIataCode)) {
+
+            throw new DuplicateResourceException("Aircraft", "IATA Code", newIataCode);
+        }
     }
 }
