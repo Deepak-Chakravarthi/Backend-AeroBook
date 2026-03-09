@@ -19,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * The type Route service.
+ */
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
@@ -29,12 +32,25 @@ public class RouteService {
     private final AirportService airportService;
     private final AirportQueryService airportQueryService;
 
+    /**
+     * Gets routes.
+     *
+     * @param request  the request
+     * @param pageable the pageable
+     * @return the routes
+     */
     public List<RouteResponse> getRoutes(RouteGetRequest request, Pageable pageable) {
         return routeRepository.findAll(request.toSpecification(), pageable)
                 .map(routeMapper::toResponse)
                 .toList();
     }
 
+    /**
+     * Create route route response.
+     *
+     * @param request the request
+     * @return the route response
+     */
     @Transactional
     public RouteResponse createRoute(RouteRequest request) {
         if (request.originAirportId().equals(request.destinationAirportId())) {
@@ -54,6 +70,13 @@ public class RouteService {
         return routeMapper.toResponse(routeRepository.save(route));
     }
 
+    /**
+     * Update route route response.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the route response
+     */
     @Transactional
     public RouteResponse updateRoute(Long id, RouteRequest request) {
         Route route = routeRepository.findById(id)
@@ -66,6 +89,11 @@ public class RouteService {
         return routeMapper.toResponse(routeRepository.save(route));
     }
 
+    /**
+     * Delete route.
+     *
+     * @param id the id
+     */
     @Transactional
     public void deleteRoute(Long id) {
         if (!routeRepository.existsById(id)) {

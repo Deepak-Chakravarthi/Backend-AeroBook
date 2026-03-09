@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The type Route controller.
+ */
 @RestController
 @RequestMapping("/api/v1/routes")
 @RequiredArgsConstructor
@@ -23,8 +26,15 @@ public class RouteController {
      * GET /api/v1/routes?originCode=DEL
      * GET /api/v1/routes?destinationCode=BOM
      * GET /api/v1/routes?status=ACTIVE
-     *
+     * <p>
      * Exactly one param must be passed.
+     *
+     * @param id              the id
+     * @param originCode      the origin code
+     * @param destinationCode the destination code
+     * @param status          the status
+     * @param pageable        the pageable
+     * @return the route
      */
     @GetMapping
     public ResponseEntity<?> getRoute(
@@ -45,17 +55,36 @@ public class RouteController {
         return ResponseEntity.ok(routeService.getRoutes(request,pageable));
     }
 
+    /**
+     * Create route response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<RouteResponse> createRoute(@Valid @RequestBody RouteRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(routeService.createRoute(request));
     }
 
+    /**
+     * Update route response entity.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the response entity
+     */
     @PutMapping("/{id}")
     public ResponseEntity<RouteResponse> updateRoute(@PathVariable Long id,
                                                      @Valid @RequestBody RouteRequest request) {
         return ResponseEntity.ok(routeService.updateRoute(id, request));
     }
 
+    /**
+     * Delete route response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRoute(@PathVariable Long id) {
         routeService.deleteRoute(id);

@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.Specification;
 
+/**
+ * The type Route get request.
+ */
 @Getter
 @Builder
 public class RouteGetRequest {
@@ -17,6 +20,11 @@ public class RouteGetRequest {
     private final String destinationCode;
     private final String status;
 
+    /**
+     * To specification specification.
+     *
+     * @return the specification
+     */
     public Specification<Route> toSpecification() {
         return SpecificationBuilder.<Route>builder()
                 .addEquals("id", id)

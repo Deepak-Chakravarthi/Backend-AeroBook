@@ -9,6 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The type Airline request.
+ */
 @AllArgsConstructor
 @Getter
 @Setter

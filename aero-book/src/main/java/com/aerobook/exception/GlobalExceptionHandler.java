@@ -11,9 +11,18 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * The type Global exception handler.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Handle aero book exception response entity.
+     *
+     * @param ex the ex
+     * @return the response entity
+     */
     @ExceptionHandler(AeroBookException.class)
     public ResponseEntity<ErrorResponse> handleAeroBookException(AeroBookException ex) {
         return ResponseEntity.status(ex.getStatus()).body(new ErrorResponse(
@@ -25,6 +34,12 @@ public class GlobalExceptionHandler {
         ));
     }
 
+    /**
+     * Handle validation exception response entity.
+     *
+     * @param ex the ex
+     * @return the response entity
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
@@ -40,6 +55,12 @@ public class GlobalExceptionHandler {
         ));
     }
 
+    /**
+     * Handle generic exception response entity.
+     *
+     * @param ex the ex
+     * @return the response entity
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(
@@ -51,6 +72,12 @@ public class GlobalExceptionHandler {
         ));
     }
 
+    /**
+     * Handle illegal argument exception response entity.
+     *
+     * @param ex the ex
+     * @return the response entity
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(

@@ -6,14 +6,32 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Specification builder.
+ *
+ * @param <T> the type parameter
+ */
 public class SpecificationBuilder<T> {
 
     private final List<Specification<T>> specs = new ArrayList<>();
 
+    /**
+     * Builder specification builder.
+     *
+     * @param <T> the type parameter
+     * @return the specification builder
+     */
     public static <T> SpecificationBuilder<T> builder() {
         return new SpecificationBuilder<>();
     }
 
+    /**
+     * Add equals specification builder.
+     *
+     * @param field the field
+     * @param value the value
+     * @return the specification builder
+     */
     public SpecificationBuilder<T> addEquals(String field, Object value) {
         if (isPresent(value)) {
             specs.add((root, query, cb) ->
@@ -22,6 +40,13 @@ public class SpecificationBuilder<T> {
         return this;
     }
 
+    /**
+     * Add like specification builder.
+     *
+     * @param field the field
+     * @param value the value
+     * @return the specification builder
+     */
     public SpecificationBuilder<T> addLike(String field, String value) {
         if (isPresent(value)) {
             specs.add((root, query, cb) ->
@@ -31,6 +56,14 @@ public class SpecificationBuilder<T> {
     }
 
 
+    /**
+     * Add join equals specification builder.
+     *
+     * @param joinField the join field
+     * @param field     the field
+     * @param value     the value
+     * @return the specification builder
+     */
     public SpecificationBuilder<T> addJoinEquals(String joinField, String field, Object value) {
         if (isPresent(value)) {
             specs.add((root, query, cb) ->
@@ -40,6 +73,15 @@ public class SpecificationBuilder<T> {
     }
 
 
+    /**
+     * Add enum equals specification builder.
+     *
+     * @param <E>       the type parameter
+     * @param field     the field
+     * @param value     the value
+     * @param enumClass the enum class
+     * @return the specification builder
+     */
     public <E extends Enum<E>> SpecificationBuilder<T> addEnumEquals(
             String field, String value, Class<E> enumClass) {
         if (isPresent(value)) {
@@ -57,6 +99,11 @@ public class SpecificationBuilder<T> {
     }
 
 
+    /**
+     * Build specification.
+     *
+     * @return the specification
+     */
     public Specification<T> build() {
         if (specs.isEmpty()) {
             return Specification.where((root, query, cb) -> null);

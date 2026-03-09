@@ -17,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * The type Airline service.
+ */
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
@@ -26,12 +29,25 @@ public class AirlineService {
     private final AirlineMapper airlineMapper;
     private final AirlineQueryService airlineQueryService;
 
+    /**
+     * Gets airlines.
+     *
+     * @param request  the request
+     * @param pageable the pageable
+     * @return the airlines
+     */
     public List<AirlineResponse> getAirlines(AirlineGetRequest request, Pageable pageable) {
         return airlineRepository.findAll(request.toSpecification(), pageable)
                 .map(airlineMapper::toResponse)
                 .toList();
     }
 
+    /**
+     * Create airline entity airline.
+     *
+     * @param request the request
+     * @return the airline
+     */
     @Transactional
     @CachePut(value = "airline", key = "#request.id")
     public Airline createAirlineEntity(AirlineRequest request) {
@@ -47,6 +63,13 @@ public class AirlineService {
         return airlineRepository.save(airline);
     }
 
+    /**
+     * Update airline enitity airline.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the airline
+     */
     @Transactional
     @CachePut(value = "airlineById", key = "#id")
     public Airline updateAirlineEnitity(Long id, AirlineRequest request) {
@@ -60,16 +83,34 @@ public class AirlineService {
         return airlineRepository.save(airline);
     }
 
+    /**
+     * Create airline airline response.
+     *
+     * @param request the request
+     * @return the airline response
+     */
     public AirlineResponse createAirline(AirlineRequest request) {
         Airline airline = createAirlineEntity(request);
         return airlineMapper.toResponse(airline);
     }
 
+    /**
+     * Update airline airline response.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the airline response
+     */
     public AirlineResponse updateAirline(Long id, AirlineRequest request) {
         Airline airline = updateAirlineEnitity(id, request);
         return airlineMapper.toResponse(airline);
     }
 
+    /**
+     * Delete airline.
+     *
+     * @param id the id
+     */
     @Transactional
     public void deleteAirline(Long id) {
         if (!airlineRepository.existsById(id)) {
@@ -78,6 +119,12 @@ public class AirlineService {
         airlineRepository.deleteById(id);
     }
 
+    /**
+     * Validate iata code update.
+     *
+     * @param existing    the existing
+     * @param newIataCode the new iata code
+     */
     public void validateIataCodeUpdate(String existing, String newIataCode) {
 
         if (!existing.equalsIgnoreCase(newIataCode)

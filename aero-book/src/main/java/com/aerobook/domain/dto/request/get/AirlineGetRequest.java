@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.Specification;
 
+/**
+ * The type Airline get request.
+ */
 @Getter
 @Builder
 public class AirlineGetRequest {
@@ -18,6 +21,11 @@ public class AirlineGetRequest {
     private final String country;
     private final String status;
 
+    /**
+     * To specification specification.
+     *
+     * @return the specification
+     */
     public Specification<Airline> toSpecification() {
         return SpecificationBuilder.<Airline>builder()
                 .addEquals("id", id)

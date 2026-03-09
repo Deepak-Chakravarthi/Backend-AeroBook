@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * The type Aircraft seat config service.
+ */
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
@@ -24,12 +27,25 @@ public class AircraftSeatConfigService {
     private final AircraftSeatConfigMapper seatConfigMapper;
     private final AircraftQueryService aircraftQueryService;
 
+    /**
+     * Gets seat configs by aircraft.
+     *
+     * @param aircraftId the aircraft id
+     * @return the seat configs by aircraft
+     */
     public List<AircraftSeatConfigResponse> getSeatConfigsByAircraft(Long aircraftId) {
         return seatConfigRepository.findAllByAircraftId(aircraftId).stream()
                 .map(seatConfigMapper::toResponse)
                 .toList();
     }
 
+    /**
+     * Add seat config aircraft seat config response.
+     *
+     * @param aircraftId the aircraft id
+     * @param request    the request
+     * @return the aircraft seat config response
+     */
     @Transactional
     public AircraftSeatConfigResponse addSeatConfig(Long aircraftId, AircraftSeatConfigRequest request) {
         Aircraft aircraft = aircraftQueryService.findAircraftById(aircraftId);
@@ -41,6 +57,13 @@ public class AircraftSeatConfigService {
         return seatConfigMapper.toResponse(seatConfigRepository.save(config));
     }
 
+    /**
+     * Update seat config aircraft seat config response.
+     *
+     * @param configId the config id
+     * @param request  the request
+     * @return the aircraft seat config response
+     */
     @Transactional
     public AircraftSeatConfigResponse updateSeatConfig(Long configId, AircraftSeatConfigRequest request) {
         AircraftSeatConfig config = seatConfigRepository.findById(configId)
@@ -51,6 +74,11 @@ public class AircraftSeatConfigService {
         return seatConfigMapper.toResponse(seatConfigRepository.save(config));
     }
 
+    /**
+     * Delete seat config.
+     *
+     * @param configId the config id
+     */
     @Transactional
     public void deleteSeatConfig(Long configId) {
         if (!seatConfigRepository.existsById(configId)) {

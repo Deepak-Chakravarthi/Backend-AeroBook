@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Airline.
+ */
 @Entity
 @Table(name = "airlines", uniqueConstraints = {
         @UniqueConstraint(columnNames = "iata_code")

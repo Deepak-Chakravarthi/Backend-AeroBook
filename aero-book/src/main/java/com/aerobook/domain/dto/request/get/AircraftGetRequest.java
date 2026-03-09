@@ -8,6 +8,9 @@ import lombok.Getter;
 import org.springframework.data.jpa.domain.Specification;
 
 
+/**
+ * The type Aircraft get request.
+ */
 @Getter
 @Builder
 public class AircraftGetRequest {
@@ -20,6 +23,11 @@ public class AircraftGetRequest {
     private final String status;
 
 
+    /**
+     * To specification specification.
+     *
+     * @return the specification
+     */
     public Specification<Aircraft> toSpecification() {
         return SpecificationBuilder.<Aircraft>builder()
                 .addEquals("id", id)

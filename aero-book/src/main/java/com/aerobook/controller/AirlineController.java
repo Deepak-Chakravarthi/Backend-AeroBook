@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The type Airline controller.
+ */
 @RestController
 @RequestMapping("/api/v1/airlines")
 @RequiredArgsConstructor
@@ -18,13 +21,16 @@ public class AirlineController {
 
     private final AirlineService airlineService;
 
+
     /**
-     * GET /api/v1/airlines?id=1
-     * GET /api/v1/airlines?iataCode=AI
-     * GET /api/v1/airlines?status=ACTIVE
-     * GET /api/v1/airlines?country=India
+     * Gets airline.
      *
-     * Exactly one param must be passed.
+     * @param id       the id
+     * @param iataCode the iata code
+     * @param status   the status
+     * @param country  the country
+     * @param pageable the pageable
+     * @return the airline
      */
     @GetMapping
     public ResponseEntity<?> getAirline(
@@ -44,17 +50,36 @@ public class AirlineController {
         return ResponseEntity.ok(airlineService.getAirlines(request,pageable));
     }
 
+    /**
+     * Create airline response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<AirlineResponse> createAirline(@Valid @RequestBody AirlineRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(airlineService.createAirline(request));
     }
 
+    /**
+     * Update airline response entity.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the response entity
+     */
     @PutMapping("/{id}")
     public ResponseEntity<AirlineResponse> updateAirline(@PathVariable Long id,
                                                          @Valid @RequestBody AirlineRequest request) {
         return ResponseEntity.ok(airlineService.updateAirline(id, request));
     }
 
+    /**
+     * Delete airline response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAirline(@PathVariable Long id) {
         airlineService.deleteAirline(id);

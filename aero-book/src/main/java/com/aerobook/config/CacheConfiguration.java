@@ -8,11 +8,19 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The type Cache configuration.
+ */
 @Configuration
 public class CacheConfiguration {
 
     private static final Integer MAX_SIZE= 100000;
 
+    /**
+     * Cache manager cache manager.
+     *
+     * @return the cache manager
+     */
     @Bean
     public CacheManager cacheManager() {
 

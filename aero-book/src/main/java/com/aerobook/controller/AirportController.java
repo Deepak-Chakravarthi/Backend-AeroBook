@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The type Airport controller.
+ */
 @RestController
 @RequestMapping("/api/v1/airports")
 @RequiredArgsConstructor
@@ -26,6 +29,13 @@ public class AirportController {
      * GET /api/v1/airports?country=India
      * <p>
      * Exactly one param must be passed.
+     *
+     * @param id       the id
+     * @param iataCode the iata code
+     * @param city     the city
+     * @param country  the country
+     * @param pageable the pageable
+     * @return the airport
      */
     @GetMapping
     public ResponseEntity<?> getAirport(
@@ -45,17 +55,36 @@ public class AirportController {
         return ResponseEntity.ok(airportService.getAirports(request,pageable));
     }
 
+    /**
+     * Create airport response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<AirportResponse> createAirport(@Valid @RequestBody AirportRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(airportService.createAirport(request));
     }
 
+    /**
+     * Update airport response entity.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the response entity
+     */
     @PutMapping("/{id}")
     public ResponseEntity<AirportResponse> updateAirport(@PathVariable Long id,
                                                          @Valid @RequestBody AirportRequest request) {
         return ResponseEntity.ok(airportService.updateAirport(id, request));
     }
 
+    /**
+     * Delete airport response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAirport(@PathVariable Long id) {
         airportService.deleteAirport(id);

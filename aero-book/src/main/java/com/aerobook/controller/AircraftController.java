@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The type Aircraft controller.
+ */
 @RestController
 @RequestMapping("/aircraft")
 @AllArgsConstructor
@@ -25,6 +28,16 @@ public class AircraftController {
     private final AircraftService aircraftService;
     private final AircraftSeatConfigService seatConfigService;
 
+    /**
+     * Gets aircraft.
+     *
+     * @param id                 the id
+     * @param registrationNumber the registration number
+     * @param airlineId          the airline id
+     * @param status             the status
+     * @param pageable           the pageable
+     * @return the aircraft
+     */
     @GetMapping
     public ResponseEntity<?> getAircraft(
             @RequestParam(required = false) Long id,
@@ -43,34 +56,74 @@ public class AircraftController {
         return ResponseEntity.ok(aircraftService.getAircraft(request,pageable));
     }
 
+    /**
+     * Create aircraft response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<AircraftResponse> createAircraft(@Valid @RequestBody AircraftRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(aircraftService.createAircraft(request));
     }
 
+    /**
+     * Update aircraft response entity.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the response entity
+     */
     @PutMapping("/{id}")
     public ResponseEntity<AircraftResponse> updateAircraft(@PathVariable Long id,
                                                            @Valid @RequestBody AircraftRequest request) {
         return ResponseEntity.ok(aircraftService.updateAircraft(id, request));
     }
 
+    /**
+     * Delete aircraft response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAircraft(@PathVariable Long id) {
         aircraftService.deleteAircraft(id);
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Gets seat configs.
+     *
+     * @param aircraftId the aircraft id
+     * @return the seat configs
+     */
     @GetMapping("/{aircraftId}/seat-configs")
     public ResponseEntity<List<AircraftSeatConfigResponse>> getSeatConfigs(@PathVariable Long aircraftId) {
         return ResponseEntity.ok(seatConfigService.getSeatConfigsByAircraft(aircraftId));
     }
 
+    /**
+     * Add seat config response entity.
+     *
+     * @param aircraftId the aircraft id
+     * @param request    the request
+     * @return the response entity
+     */
     @PostMapping("/{aircraftId}/seat-configs")
     public ResponseEntity<AircraftSeatConfigResponse> addSeatConfig(@PathVariable Long aircraftId,
                                                                     @Valid @RequestBody AircraftSeatConfigRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(seatConfigService.addSeatConfig(aircraftId, request));
     }
 
+    /**
+     * Update seat config response entity.
+     *
+     * @param aircraftId the aircraft id
+     * @param configId   the config id
+     * @param request    the request
+     * @return the response entity
+     */
     @PutMapping("/{aircraftId}/seat-configs/{configId}")
     public ResponseEntity<AircraftSeatConfigResponse> updateSeatConfig(@PathVariable Long aircraftId,
                                                                        @PathVariable Long configId,
@@ -78,6 +131,13 @@ public class AircraftController {
         return ResponseEntity.ok(seatConfigService.updateSeatConfig(configId, request));
     }
 
+    /**
+     * Delete seat config response entity.
+     *
+     * @param aircraftId the aircraft id
+     * @param configId   the config id
+     * @return the response entity
+     */
     @DeleteMapping("/{aircraftId}/seat-configs/{configId}")
     public ResponseEntity<Void> deleteSeatConfig(@PathVariable Long aircraftId,
                                                  @PathVariable Long configId) {

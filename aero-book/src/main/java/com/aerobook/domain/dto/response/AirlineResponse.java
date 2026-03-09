@@ -6,6 +6,9 @@ import com.aerobook.domain.enums.AirlineStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * The type Airline response.
+ */
 public record AirlineResponse(
         Long id,
         String name,

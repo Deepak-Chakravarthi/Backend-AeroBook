@@ -9,6 +9,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
+/**
+ * The type Pageable configuration.
+ */
 @Configuration
 @Slf4j
 public class PageableConfiguration implements WebMvcConfigurer {

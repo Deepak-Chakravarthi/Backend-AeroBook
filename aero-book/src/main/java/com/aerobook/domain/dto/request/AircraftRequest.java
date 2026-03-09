@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The type Aircraft request.
+ */
 @AllArgsConstructor
 @Getter
 @Setter

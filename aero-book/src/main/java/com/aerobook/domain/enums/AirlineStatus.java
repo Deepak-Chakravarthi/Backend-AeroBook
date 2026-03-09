@@ -3,7 +3,21 @@ package com.aerobook.domain.enums;
 import com.aerobook.exception.AeroBookException;
 import org.springframework.http.HttpStatus;
 
+/**
+ * The enum Airline status.
+ */
 public enum AirlineStatus {
-    ACTIVE, INACTIVE, SUSPENDED;
+    /**
+     * Active airline status.
+     */
+    ACTIVE,
+    /**
+     * Inactive airline status.
+     */
+    INACTIVE,
+    /**
+     * Suspended airline status.
+     */
+    SUSPENDED;
 
 }

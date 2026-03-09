@@ -7,6 +7,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+/**
+ * The type Airport.
+ */
 // Airport is reference data needed by Route
 @Entity
 @Table(name = "airports", uniqueConstraints = {

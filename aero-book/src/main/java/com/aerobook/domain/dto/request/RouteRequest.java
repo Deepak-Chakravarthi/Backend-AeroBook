@@ -4,6 +4,9 @@ package com.aerobook.domain.dto.request;
 import com.aerobook.domain.enums.RouteStatus;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * The type Route request.
+ */
 public record RouteRequest(
 
         @NotNull(message = "Origin airport ID is required")

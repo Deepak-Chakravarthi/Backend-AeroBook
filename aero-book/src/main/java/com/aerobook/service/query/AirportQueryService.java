@@ -7,12 +7,21 @@ import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+/**
+ * The type Airport query service.
+ */
 @Service
 @AllArgsConstructor
 public class AirportQueryService {
 
     private final AirportRepository airportRepository;
 
+    /**
+     * Find airport by id airport.
+     *
+     * @param id the id
+     * @return the airport
+     */
     @Cacheable(value = "airport", key = "#id")
     public Airport findAirportById(Long id) {
 

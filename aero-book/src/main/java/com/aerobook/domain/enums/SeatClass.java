@@ -1,5 +1,19 @@
 package com.aerobook.domain.enums;
 
+/**
+ * The enum Seat class.
+ */
 public enum SeatClass {
-    ECONOMY, BUSINESS, FIRST
+    /**
+     * Economy seat class.
+     */
+    ECONOMY,
+    /**
+     * Business seat class.
+     */
+    BUSINESS,
+    /**
+     * First seat class.
+     */
+    FIRST
 }

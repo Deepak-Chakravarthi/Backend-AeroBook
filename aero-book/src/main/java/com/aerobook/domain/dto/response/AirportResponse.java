@@ -1,6 +1,9 @@
 package com.aerobook.domain.dto.response;
 
 
+/**
+ * The type Airport response.
+ */
 public record AirportResponse(
         Long id,
         String iataCode,

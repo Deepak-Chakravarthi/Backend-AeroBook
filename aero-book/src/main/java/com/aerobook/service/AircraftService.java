@@ -20,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * The type Aircraft service.
+ */
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -30,12 +33,25 @@ public class AircraftService {
     private final AircraftQueryService aircraftQueryService;
     private final AirlineQueryService airlineQueryService;
 
+    /**
+     * Gets aircraft.
+     *
+     * @param request  the request
+     * @param pageable the pageable
+     * @return the aircraft
+     */
     public List<AircraftResponse> getAircraft(AircraftGetRequest request, Pageable pageable) {
         return aircraftRepository.findAll(request.toSpecification(), pageable)
                 .map(aircraftMapper::toResponse)
                 .toList();
     }
 
+    /**
+     * Method to createAircraftEntity
+     *
+     * @param request the request
+     * @return aircraft
+     */
     @Transactional
     @CachePut(value = "aircraft", key = "#result.id")
     public Aircraft createAircraftEntity(AircraftRequest request) {
@@ -49,11 +65,24 @@ public class AircraftService {
         return aircraftRepository.save(aircraft);
     }
 
+    /**
+     * Create aircraft aircraft response.
+     *
+     * @param request the request
+     * @return the aircraft response
+     */
     public AircraftResponse createAircraft(AircraftRequest request) {
         Aircraft aircraft = createAircraftEntity(request);
         return aircraftMapper.toResponse(aircraft);
     }
 
+    /**
+     * Update aircraft entity aircraft.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the aircraft
+     */
     @Transactional
     @CachePut(value = "aircraft", key = "#id")
     public Aircraft updateAircraftEntity(Long id, AircraftRequest request) {
@@ -70,11 +99,23 @@ public class AircraftService {
         return aircraft;
     }
 
+    /**
+     * Update aircraft aircraft response.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the aircraft response
+     */
     public AircraftResponse updateAircraft(Long id, AircraftRequest request) {
         Aircraft aircraft = updateAircraftEntity(id, request);
         return aircraftMapper.toResponse(aircraft);
     }
 
+    /**
+     * Delete aircraft.
+     *
+     * @param id the id
+     */
     @Transactional
     public void deleteAircraft(Long id) {
         if (!aircraftRepository.existsById(id)) {
@@ -83,6 +124,12 @@ public class AircraftService {
         aircraftRepository.deleteById(id);
     }
 
+    /**
+     * Validate registration update.
+     *
+     * @param existing        the existing
+     * @param newRegistration the new registration
+     */
     public void validateRegistrationUpdate(String existing, String newRegistration) {
 
         if (!existing.equals(newRegistration)

@@ -5,6 +5,9 @@ import com.aerobook.domain.enums.SeatClass;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * The type Aircraft seat config.
+ */
 @Entity
 @Table(name = "aircraft_seat_config", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"aircraft_id", "seat_class"})

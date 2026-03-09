@@ -6,9 +6,18 @@ import com.aerobook.domain.dto.response.RouteResponse;
 import com.aerobook.enitity.Route;
 import org.mapstruct.*;
 
+/**
+ * The interface Route mapper.
+ */
 @Mapper(componentModel = "spring", uses = {AirportMapper.class})
 public interface RouteMapper {
 
+    /**
+     * To entity route.
+     *
+     * @param request the request
+     * @return the route
+     */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "origin", ignore = true)
     @Mapping(target = "destination", ignore = true)
@@ -16,8 +25,20 @@ public interface RouteMapper {
     @Mapping(target = "updatedAt", ignore = true)
     Route toEntity(RouteRequest request);
 
+    /**
+     * To response route response.
+     *
+     * @param route the route
+     * @return the route response
+     */
     RouteResponse toResponse(Route route);
 
+    /**
+     * Update entity.
+     *
+     * @param request the request
+     * @param route   the route
+     */
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "origin", ignore = true)

@@ -10,6 +10,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+/**
+ * The type Route.
+ */
 @Entity
 @Table(name = "routes", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"origin_airport_id", "destination_airport_id"})

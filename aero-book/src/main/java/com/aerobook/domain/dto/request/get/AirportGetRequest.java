@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.Specification;
 
+/**
+ * The type Airport get request.
+ */
 @Getter
 @Builder
 public class AirportGetRequest {
@@ -18,6 +21,11 @@ public class AirportGetRequest {
     private final String timezone;
 
 
+    /**
+     * To specification specification.
+     *
+     * @return the specification
+     */
     public Specification<Airport> toSpecification() {
         return SpecificationBuilder.<Airport>builder()
                 .addEquals("id", id)
