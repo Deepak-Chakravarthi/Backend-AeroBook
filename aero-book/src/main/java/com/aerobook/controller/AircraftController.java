@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,8 +64,11 @@ public class AircraftController {
      * @return the response entity
      */
     @PostMapping
-    public ResponseEntity<AircraftResponse> createAircraft(@Valid @RequestBody AircraftRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(aircraftService.createAircraft(request));
+    @PreAuthorize("hasAnyRole('AIRLINE_ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<AircraftResponse> createAircraft(
+            @Valid @RequestBody AircraftRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(aircraftService.createAircraft(request));
     }
 
     /**
@@ -75,8 +79,10 @@ public class AircraftController {
      * @return the response entity
      */
     @PutMapping("/{id}")
-    public ResponseEntity<AircraftResponse> updateAircraft(@PathVariable Long id,
-                                                           @Valid @RequestBody AircraftRequest request) {
+    @PreAuthorize("hasAnyRole('AIRLINE_ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<AircraftResponse> updateAircraft(
+            @PathVariable Long id,
+            @Valid @RequestBody AircraftRequest request) {
         return ResponseEntity.ok(aircraftService.updateAircraft(id, request));
     }
 
@@ -87,6 +93,7 @@ public class AircraftController {
      * @return the response entity
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Void> deleteAircraft(@PathVariable Long id) {
         aircraftService.deleteAircraft(id);
         return ResponseEntity.noContent().build();
@@ -111,9 +118,12 @@ public class AircraftController {
      * @return the response entity
      */
     @PostMapping("/{aircraftId}/seat-configs")
-    public ResponseEntity<AircraftSeatConfigResponse> addSeatConfig(@PathVariable Long aircraftId,
-                                                                    @Valid @RequestBody AircraftSeatConfigRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(seatConfigService.addSeatConfig(aircraftId, request));
+    @PreAuthorize("hasAnyRole('AIRLINE_ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<AircraftSeatConfigResponse> addSeatConfig(
+            @PathVariable Long aircraftId,
+            @Valid @RequestBody AircraftSeatConfigRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(seatConfigService.addSeatConfig(aircraftId, request));
     }
 
     /**
@@ -125,9 +135,11 @@ public class AircraftController {
      * @return the response entity
      */
     @PutMapping("/{aircraftId}/seat-configs/{configId}")
-    public ResponseEntity<AircraftSeatConfigResponse> updateSeatConfig(@PathVariable Long aircraftId,
-                                                                       @PathVariable Long configId,
-                                                                       @Valid @RequestBody AircraftSeatConfigRequest request) {
+    @PreAuthorize("hasAnyRole('AIRLINE_ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<AircraftSeatConfigResponse> updateSeatConfig(
+            @PathVariable Long aircraftId,
+            @PathVariable Long configId,
+            @Valid @RequestBody AircraftSeatConfigRequest request) {
         return ResponseEntity.ok(seatConfigService.updateSeatConfig(configId, request));
     }
 
@@ -139,8 +151,10 @@ public class AircraftController {
      * @return the response entity
      */
     @DeleteMapping("/{aircraftId}/seat-configs/{configId}")
-    public ResponseEntity<Void> deleteSeatConfig(@PathVariable Long aircraftId,
-                                                 @PathVariable Long configId) {
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<Void> deleteSeatConfig(
+            @PathVariable Long aircraftId,
+            @PathVariable Long configId) {
         seatConfigService.deleteSeatConfig(configId);
         return ResponseEntity.noContent().build();
     }
