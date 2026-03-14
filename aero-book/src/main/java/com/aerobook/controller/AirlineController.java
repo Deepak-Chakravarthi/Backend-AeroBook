@@ -9,13 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * The type Airline controller.
  */
 @RestController
-@RequestMapping("/api/v1/airlines")
+@RequestMapping("/airlines")
 @RequiredArgsConstructor
 public class AirlineController {
 
@@ -57,8 +58,11 @@ public class AirlineController {
      * @return the response entity
      */
     @PostMapping
-    public ResponseEntity<AirlineResponse> createAirline(@Valid @RequestBody AirlineRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(airlineService.createAirline(request));
+    @PreAuthorize("hasAnyRole('AIRLINE_ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<AirlineResponse> createAirline(
+            @Valid @RequestBody AirlineRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(airlineService.createAirline(request));
     }
 
     /**
@@ -69,8 +73,10 @@ public class AirlineController {
      * @return the response entity
      */
     @PutMapping("/{id}")
-    public ResponseEntity<AirlineResponse> updateAirline(@PathVariable Long id,
-                                                         @Valid @RequestBody AirlineRequest request) {
+    @PreAuthorize("hasAnyRole('AIRLINE_ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<AirlineResponse> updateAirline(
+            @PathVariable Long id,
+            @Valid @RequestBody AirlineRequest request) {
         return ResponseEntity.ok(airlineService.updateAirline(id, request));
     }
 
@@ -81,6 +87,7 @@ public class AirlineController {
      * @return the response entity
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Void> deleteAirline(@PathVariable Long id) {
         airlineService.deleteAirline(id);
         return ResponseEntity.noContent().build();
