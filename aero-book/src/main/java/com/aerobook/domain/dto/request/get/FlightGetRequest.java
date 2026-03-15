@@ -10,6 +10,9 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 
+/**
+ * The type Flight get request.
+ */
 @Getter
 @Builder
 public class FlightGetRequest {
@@ -24,6 +27,11 @@ public class FlightGetRequest {
     private final String     originCode;
     private final String     destinationCode;
 
+    /**
+     * To specification specification.
+     *
+     * @return the specification
+     */
     public Specification<Flight> toSpecification() {
         return SpecificationBuilder.<Flight>builder()
                 .addEquals("id", id)

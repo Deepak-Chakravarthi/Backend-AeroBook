@@ -25,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * The type Flight service.
+ */
 @Service
 @RequiredArgsConstructor
 public class FlightService {
@@ -35,16 +38,35 @@ public class FlightService {
     private final AircraftQueryService aircraftQueryService;
     private final RouteService routeService;
 
+    /**
+     * Gets flights.
+     *
+     * @param request  the request
+     * @param pageable the pageable
+     * @return the flights
+     */
     public List<FlightResponse> getFlights(FlightGetRequest request, Pageable pageable) {
         return flightRepository.findAll(request.toSpecification(), pageable)
                 .map(flightMapper::toResponse)
                 .getContent();
     }
 
+    /**
+     * Gets flight by id.
+     *
+     * @param id the id
+     * @return the flight by id
+     */
     public FlightResponse getFlightById(Long id) {
         return flightMapper.toResponse(findFlightById(id));
     }
 
+    /**
+     * Create flight flight response.
+     *
+     * @param request the request
+     * @return the flight response
+     */
     @Transactional
     public FlightResponse createFlight(FlightRequest request) {
         validateFlightNumberUnique(request.flightNumber(), request.departureDate());
@@ -64,6 +86,13 @@ public class FlightService {
         return flightMapper.toResponse(flightRepository.save(flight));
     }
 
+    /**
+     * Update flight flight response.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the flight response
+     */
     @Transactional
     public FlightResponse updateFlight(Long id, FlightRequest request) {
         Flight flight = findFlightById(id);
@@ -87,6 +116,13 @@ public class FlightService {
         return flightMapper.toResponse(flightRepository.save(flight));
     }
 
+    /**
+     * Update flight status flight response.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the flight response
+     */
     @Transactional
     public FlightResponse updateFlightStatus(Long id, FlightStatusUpdateRequest request) {
         Flight flight = findFlightById(id);
@@ -106,6 +142,11 @@ public class FlightService {
         return flightMapper.toResponse(flightRepository.save(flight));
     }
 
+    /**
+     * Delete flight.
+     *
+     * @param id the id
+     */
     @Transactional
     public void deleteFlight(Long id) {
         if (!flightRepository.existsById(id)) {
@@ -114,6 +155,12 @@ public class FlightService {
         flightRepository.deleteById(id);
     }
 
+    /**
+     * Find flight by id flight.
+     *
+     * @param id the id
+     * @return the flight
+     */
     public Flight findFlightById(Long id) {
         return flightRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Flight", id));
@@ -140,6 +187,13 @@ public class FlightService {
         }
     }
 
+    /**
+     * Exists by flight number and date boolean.
+     *
+     * @param flightNumber the flight number
+     * @param date         the date
+     * @return the boolean
+     */
     public boolean existsByFlightNumberAndDate(String flightNumber, LocalDate date) {
         return flightRepository.existsByFlightNumberAndDepartureDate(flightNumber, date);
     }

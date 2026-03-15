@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 import com.aerobook.annotations.AuthenticatedEndpoint;
+import com.aerobook.annotations.ExemptAuthorization;
 import com.aerobook.domain.dto.request.*;
 import com.aerobook.domain.dto.request.get.FlightGetRequest;
 import com.aerobook.domain.dto.response.FlightFareResponse;
@@ -17,6 +18,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static java.time.LocalDate.parse;
+
+/**
+ * The type Flight controller.
+ */
 @RestController
 @RequestMapping("/flights")
 @RequiredArgsConstructor
@@ -25,8 +31,23 @@ public class FlightController {
     private final FlightService     flightService;
     private final FlightFareService flightFareService;
 
+    /**
+     * Gets flights.
+     *
+     * @param id              the id
+     * @param flightNumber    the flight number
+     * @param airlineId       the airline id
+     * @param aircraftId      the aircraft id
+     * @param routeId         the route id
+     * @param departureDate   the departure date
+     * @param status          the status
+     * @param originCode      the origin code
+     * @param destinationCode the destination code
+     * @param pageable        the pageable
+     * @return the flights
+     */
     @GetMapping
-    @AuthenticatedEndpoint(reason = "Any logged-in user can view flights")
+    @ExemptAuthorization(reason = "Flight listing is publicly accessible without login")
     public ResponseEntity<List<FlightResponse>> getFlights(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String flightNumber,
@@ -46,7 +67,7 @@ public class FlightController {
                 .aircraftId(aircraftId)
                 .routeId(routeId)
                 .departureDate(departureDate != null
-                        ? java.time.LocalDate.parse(departureDate) : null)
+                        ? parse(departureDate) : null)
                 .status(status)
                 .originCode(originCode)
                 .destinationCode(destinationCode)
@@ -55,19 +76,36 @@ public class FlightController {
         return ResponseEntity.ok(flightService.getFlights(request, pageable));
     }
 
+    /**
+     * Gets flight by id.
+     *
+     * @param id the id
+     * @return the flight by id
+     */
     @GetMapping("/{id}")
-    @AuthenticatedEndpoint(reason = "Any logged-in user can view flight details")
+    @ExemptAuthorization(reason = "Flight details are publicly accessible without login")
     public ResponseEntity<FlightResponse> getFlightById(@PathVariable Long id) {
         return ResponseEntity.ok(flightService.getFlightById(id));
     }
 
+    /**
+     * Gets fares.
+     *
+     * @param flightId the flight id
+     * @return the fares
+     */
     @GetMapping("/{flightId}/fares")
-    @AuthenticatedEndpoint(reason = "Any logged-in user can view fares")
+    @ExemptAuthorization(reason = "Fare details are publicly accessible without login")
     public ResponseEntity<List<FlightFareResponse>> getFares(@PathVariable Long flightId) {
         return ResponseEntity.ok(flightFareService.getFaresByFlight(flightId));
     }
 
-    // ── CUD — AIRLINE_ADMIN / SUPER_ADMIN ────────────────────────────
+    /**
+     * Create flight response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping
     @PreAuthorize("hasAnyRole('AIRLINE_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<FlightResponse> createFlight(
@@ -76,6 +114,13 @@ public class FlightController {
                 .body(flightService.createFlight(request));
     }
 
+    /**
+     * Update flight response entity.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the response entity
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('AIRLINE_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<FlightResponse> updateFlight(
@@ -84,6 +129,13 @@ public class FlightController {
         return ResponseEntity.ok(flightService.updateFlight(id, request));
     }
 
+    /**
+     * Update flight status response entity.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the response entity
+     */
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('AIRLINE_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<FlightResponse> updateFlightStatus(
@@ -92,6 +144,12 @@ public class FlightController {
         return ResponseEntity.ok(flightService.updateFlightStatus(id, request));
     }
 
+    /**
+     * Delete flight response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Void> deleteFlight(@PathVariable Long id) {
@@ -99,7 +157,13 @@ public class FlightController {
         return ResponseEntity.noContent().build();
     }
 
-    // ── Fare management ───────────────────────────────────────────────
+    /**
+     * Add fare response entity.
+     *
+     * @param flightId the flight id
+     * @param request  the request
+     * @return the response entity
+     */
     @PostMapping("/{flightId}/fares")
     @PreAuthorize("hasAnyRole('AIRLINE_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<FlightFareResponse> addFare(
@@ -109,6 +173,14 @@ public class FlightController {
                 .body(flightFareService.addFare(flightId, request));
     }
 
+    /**
+     * Update fare response entity.
+     *
+     * @param flightId the flight id
+     * @param fareId   the fare id
+     * @param request  the request
+     * @return the response entity
+     */
     @PutMapping("/{flightId}/fares/{fareId}")
     @PreAuthorize("hasAnyRole('AIRLINE_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<FlightFareResponse> updateFare(
@@ -118,6 +190,13 @@ public class FlightController {
         return ResponseEntity.ok(flightFareService.updateFare(fareId, request));
     }
 
+    /**
+     * Delete fare response entity.
+     *
+     * @param flightId the flight id
+     * @param fareId   the fare id
+     * @return the response entity
+     */
     @DeleteMapping("/{flightId}/fares/{fareId}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Void> deleteFare(

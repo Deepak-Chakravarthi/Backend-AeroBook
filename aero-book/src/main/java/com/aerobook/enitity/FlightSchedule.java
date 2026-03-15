@@ -14,6 +14,9 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The type Flight schedule.
+ */
 @Entity
 @Table(name = "flight_schedules")
 @EntityListeners(AuditingEntityListener.class)

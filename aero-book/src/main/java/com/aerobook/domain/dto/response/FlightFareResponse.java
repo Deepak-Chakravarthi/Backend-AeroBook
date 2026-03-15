@@ -4,6 +4,9 @@ import com.aerobook.domain.enums.SeatClass;
 
 import java.math.BigDecimal;
 
+/**
+ * The type Flight fare response.
+ */
 public record FlightFareResponse(
         Long id,
         SeatClass seatClass,

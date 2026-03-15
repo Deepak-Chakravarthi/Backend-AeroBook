@@ -23,6 +23,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * The type Flight schedule service.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -36,6 +39,11 @@ public class FlightScheduleService {
     private final AircraftQueryService aircraftQueryService;
     private final RouteService routeService;
 
+    /**
+     * Gets all active schedules.
+     *
+     * @return the all active schedules
+     */
     public List<FlightScheduleResponse> getAllActiveSchedules() {
         return scheduleRepository.findAllActiveWithDetails()
                 .stream()
@@ -43,10 +51,22 @@ public class FlightScheduleService {
                 .toList();
     }
 
+    /**
+     * Gets schedule by id.
+     *
+     * @param id the id
+     * @return the schedule by id
+     */
     public FlightScheduleResponse getScheduleById(Long id) {
         return flightMapper.scheduleToResponse(findScheduleById(id));
     }
 
+    /**
+     * Create schedule flight schedule response.
+     *
+     * @param request the request
+     * @return the flight schedule response
+     */
     @Transactional
     public FlightScheduleResponse createSchedule(FlightScheduleRequest request) {
         Airline airline = airlineQueryService.findAirlineById(request.airlineId());
@@ -62,6 +82,14 @@ public class FlightScheduleService {
         return flightMapper.scheduleToResponse(scheduleRepository.save(schedule));
     }
 
+    /**
+     * Generate flights from schedule int.
+     *
+     * @param scheduleId the schedule id
+     * @param from       the from
+     * @param until      the until
+     * @return the int
+     */
     @Transactional
     public int generateFlightsFromSchedule(Long scheduleId,
                                            LocalDate from,
@@ -86,6 +114,11 @@ public class FlightScheduleService {
         return count;
     }
 
+    /**
+     * Deactivate schedule.
+     *
+     * @param id the id
+     */
     @Transactional
     public void deactivateSchedule(Long id) {
         FlightSchedule schedule = findScheduleById(id);
@@ -93,6 +126,11 @@ public class FlightScheduleService {
         scheduleRepository.save(schedule);
     }
 
+    /**
+     * Delete schedule.
+     *
+     * @param id the id
+     */
     @Transactional
     public void deleteSchedule(Long id) {
         if (!scheduleRepository.existsById(id)) {

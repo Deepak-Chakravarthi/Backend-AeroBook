@@ -6,6 +6,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * The type Flight response.
+ */
 public record FlightResponse(
         Long id,
         String flightNumber,

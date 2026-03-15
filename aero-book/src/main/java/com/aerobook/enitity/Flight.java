@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Flight.
+ */
 @Entity
 @Table(name = "flights", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"flight_number", "departure_date"})

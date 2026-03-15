@@ -6,6 +6,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 
+/**
+ * The type Flight schedule response.
+ */
 public record FlightScheduleResponse(
         Long id,
         String flightNumberPrefix,

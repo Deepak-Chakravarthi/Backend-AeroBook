@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * The type Flight fare service.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -25,6 +28,12 @@ public class FlightFareService {
     private final FlightMapper         flightMapper;
     private final FlightService        flightService;
 
+    /**
+     * Gets fares by flight.
+     *
+     * @param flightId the flight id
+     * @return the fares by flight
+     */
     public List<FlightFareResponse> getFaresByFlight(Long flightId) {
         return flightFareRepository.findAllByFlightId(flightId)
                 .stream()
@@ -32,6 +41,13 @@ public class FlightFareService {
                 .toList();
     }
 
+    /**
+     * Add fare flight fare response.
+     *
+     * @param flightId the flight id
+     * @param request  the request
+     * @return the flight fare response
+     */
     @Transactional
     public FlightFareResponse addFare(Long flightId, FlightFareRequest request) {
         Flight flight = flightService.findFlightById(flightId);
@@ -50,6 +66,13 @@ public class FlightFareService {
         return flightMapper.fareToResponse(flightFareRepository.save(fare));
     }
 
+    /**
+     * Update fare flight fare response.
+     *
+     * @param fareId  the fare id
+     * @param request the request
+     * @return the flight fare response
+     */
     @Transactional
     public FlightFareResponse updateFare(Long fareId, FlightFareRequest request) {
         FlightFare fare = flightFareRepository.findById(fareId)
@@ -63,6 +86,11 @@ public class FlightFareService {
         return flightMapper.fareToResponse(flightFareRepository.save(fare));
     }
 
+    /**
+     * Delete fare.
+     *
+     * @param fareId the fare id
+     */
     @Transactional
     public void deleteFare(Long fareId) {
         if (!flightFareRepository.existsById(fareId)) {

@@ -7,6 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * The type Flight request.
+ */
 public record FlightRequest(
 
         @NotBlank(message = "Flight number is required")

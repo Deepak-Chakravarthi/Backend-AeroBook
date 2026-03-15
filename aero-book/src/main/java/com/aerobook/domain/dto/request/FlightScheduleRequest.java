@@ -9,6 +9,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 
+/**
+ * The type Flight schedule request.
+ */
 public record FlightScheduleRequest(
 
         @NotBlank(message = "Flight number prefix is required")

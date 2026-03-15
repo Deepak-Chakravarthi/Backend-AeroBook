@@ -7,6 +7,9 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * The type Flight fare.
+ */
 @Entity
 @Table(name = "flight_fares", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"flight_id", "seat_class"})
