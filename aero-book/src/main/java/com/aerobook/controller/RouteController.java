@@ -1,7 +1,7 @@
 package com.aerobook.controller;
 
-import com.aerobook.domain.dto.request.get.RouteGetRequest;
 import com.aerobook.domain.dto.request.RouteRequest;
+import com.aerobook.domain.dto.request.get.RouteGetRequest;
 import com.aerobook.domain.dto.response.RouteResponse;
 import com.aerobook.service.RouteService;
 import jakarta.validation.Valid;
@@ -23,12 +23,7 @@ public class RouteController {
     private final RouteService routeService;
 
     /**
-     * GET /api/v1/routes?id=1
-     * GET /api/v1/routes?originCode=DEL
-     * GET /api/v1/routes?destinationCode=BOM
-     * GET /api/v1/routes?status=ACTIVE
-     * <p>
-     * Exactly one param must be passed.
+     * Method to getRoute
      *
      * @param id              the id
      * @param originCode      the origin code
@@ -38,13 +33,14 @@ public class RouteController {
      * @return the route
      */
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getRoute(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String originCode,
             @RequestParam(required = false) String destinationCode,
             @RequestParam(required = false) String status,
             Pageable pageable
-            ) {
+    ) {
 
         RouteGetRequest request = RouteGetRequest.builder()
                 .id(id)
@@ -53,7 +49,7 @@ public class RouteController {
                 .status(status)
                 .build();
 
-        return ResponseEntity.ok(routeService.getRoutes(request,pageable));
+        return ResponseEntity.ok(routeService.getRoutes(request, pageable));
     }
 
     /**

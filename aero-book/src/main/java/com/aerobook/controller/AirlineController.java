@@ -1,7 +1,8 @@
 package com.aerobook.controller;
 
-import com.aerobook.domain.dto.request.get.AirlineGetRequest;
+import com.aerobook.annotations.AuthenticatedEndpoint;
 import com.aerobook.domain.dto.request.AirlineRequest;
+import com.aerobook.domain.dto.request.get.AirlineGetRequest;
 import com.aerobook.domain.dto.response.AirlineResponse;
 import com.aerobook.service.AirlineService;
 import jakarta.validation.Valid;
@@ -34,6 +35,7 @@ public class AirlineController {
      * @return the airline
      */
     @GetMapping
+    @AuthenticatedEndpoint
     public ResponseEntity<?> getAirline(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String iataCode,
@@ -48,7 +50,7 @@ public class AirlineController {
                 .country(country)
                 .build();
 
-        return ResponseEntity.ok(airlineService.getAirlines(request,pageable));
+        return ResponseEntity.ok(airlineService.getAirlines(request, pageable));
     }
 
     /**

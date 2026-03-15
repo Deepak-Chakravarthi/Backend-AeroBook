@@ -1,8 +1,9 @@
 package com.aerobook.controller;
 
 
-import com.aerobook.domain.dto.request.get.AirportGetRequest;
+import com.aerobook.annotations.AuthenticatedEndpoint;
 import com.aerobook.domain.dto.request.AirportRequest;
+import com.aerobook.domain.dto.request.get.AirportGetRequest;
 import com.aerobook.domain.dto.response.AirportResponse;
 import com.aerobook.service.AirportService;
 import jakarta.validation.Valid;
@@ -24,12 +25,7 @@ public class AirportController {
     private final AirportService airportService;
 
     /**
-     * GET /api/v1/airports?id=1
-     * GET /api/v1/airports?iataCode=DEL
-     * GET /api/v1/airports?city=Mumbai
-     * GET /api/v1/airports?country=India
-     * <p>
-     * Exactly one param must be passed.
+     * Method to get Airport
      *
      * @param id       the id
      * @param iataCode the iata code
@@ -39,6 +35,7 @@ public class AirportController {
      * @return the airport
      */
     @GetMapping
+    @AuthenticatedEndpoint
     public ResponseEntity<?> getAirport(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String iataCode,
@@ -53,7 +50,7 @@ public class AirportController {
                 .country(country)
                 .build();
 
-        return ResponseEntity.ok(airportService.getAirports(request,pageable));
+        return ResponseEntity.ok(airportService.getAirports(request, pageable));
     }
 
     /**

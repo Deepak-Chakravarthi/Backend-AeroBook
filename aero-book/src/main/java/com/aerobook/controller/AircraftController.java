@@ -1,13 +1,14 @@
 package com.aerobook.controller;
 
 
-import com.aerobook.domain.dto.request.get.AircraftGetRequest;
+import com.aerobook.annotations.AuthenticatedEndpoint;
 import com.aerobook.domain.dto.request.AircraftRequest;
 import com.aerobook.domain.dto.request.AircraftSeatConfigRequest;
+import com.aerobook.domain.dto.request.get.AircraftGetRequest;
 import com.aerobook.domain.dto.response.AircraftResponse;
 import com.aerobook.domain.dto.response.AircraftSeatConfigResponse;
-import com.aerobook.service.AircraftService;
 import com.aerobook.service.AircraftSeatConfigService;
+import com.aerobook.service.AircraftService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +41,7 @@ public class AircraftController {
      * @return the aircraft
      */
     @GetMapping
+    @AuthenticatedEndpoint
     public ResponseEntity<?> getAircraft(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String registrationNumber,
@@ -54,7 +56,7 @@ public class AircraftController {
                 .status(status)
                 .build();
 
-        return ResponseEntity.ok(aircraftService.getAircraft(request,pageable));
+        return ResponseEntity.ok(aircraftService.getAircraft(request, pageable));
     }
 
     /**
@@ -106,6 +108,7 @@ public class AircraftController {
      * @return the seat configs
      */
     @GetMapping("/{aircraftId}/seat-configs")
+    @AuthenticatedEndpoint
     public ResponseEntity<List<AircraftSeatConfigResponse>> getSeatConfigs(@PathVariable Long aircraftId) {
         return ResponseEntity.ok(seatConfigService.getSeatConfigsByAircraft(aircraftId));
     }
