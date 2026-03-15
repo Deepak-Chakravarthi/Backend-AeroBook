@@ -1,0 +1,146 @@
+package com.aerobook.service;
+
+
+import com.aerobook.domain.dto.request.FlightRequest;
+import com.aerobook.domain.dto.request.FlightStatusUpdateRequest;
+import com.aerobook.domain.dto.request.get.FlightGetRequest;
+import com.aerobook.domain.dto.response.FlightResponse;
+import com.aerobook.enitity.Aircraft;
+import com.aerobook.enitity.Airline;
+import com.aerobook.enitity.Flight;
+import com.aerobook.enitity.Route;
+import com.aerobook.exception.AeroBookException;
+import com.aerobook.exception.DuplicateResourceException;
+import com.aerobook.exception.ResourceNotFoundException;
+import com.aerobook.mapper.FlightMapper;
+import com.aerobook.repository.FlightRepository;
+import com.aerobook.service.query.AircraftQueryService;
+import com.aerobook.service.query.AirlineQueryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class FlightService {
+
+    private final FlightRepository flightRepository;
+    private final FlightMapper flightMapper;
+    private final AirlineQueryService airlineQueryService;
+    private final AircraftQueryService aircraftQueryService;
+    private final RouteService routeService;
+
+    public List<FlightResponse> getFlights(FlightGetRequest request, Pageable pageable) {
+        return flightRepository.findAll(request.toSpecification(), pageable)
+                .map(flightMapper::toResponse)
+                .getContent();
+    }
+
+    public FlightResponse getFlightById(Long id) {
+        return flightMapper.toResponse(findFlightById(id));
+    }
+
+    @Transactional
+    public FlightResponse createFlight(FlightRequest request) {
+        validateFlightNumberUnique(request.flightNumber(), request.departureDate());
+
+        Airline airline = airlineQueryService.findAirlineById(request.airlineId());
+        Aircraft aircraft = aircraftQueryService.findAircraftById(request.aircraftId());
+        Route route = routeService.findRouteById(request.routeId());
+
+        validateAircraftBelongsToAirline(aircraft, airline);
+
+        Flight flight = flightMapper.toEntity(request);
+        flight.setAirline(airline);
+        flight.setAircraft(aircraft);
+        flight.setRoute(route);
+        flight.setCreatedAt(java.time.LocalDateTime.now());
+
+        return flightMapper.toResponse(flightRepository.save(flight));
+    }
+
+    @Transactional
+    public FlightResponse updateFlight(Long id, FlightRequest request) {
+        Flight flight = findFlightById(id);
+
+        if (!flight.getFlightNumber().equals(request.flightNumber())
+                || !flight.getDepartureDate().equals(request.departureDate())) {
+            validateFlightNumberUnique(request.flightNumber(), request.departureDate());
+        }
+
+        Airline airline = airlineQueryService.findAirlineById(request.airlineId());
+        Aircraft aircraft = aircraftQueryService.findAircraftById(request.aircraftId());
+        Route route = routeService.findRouteById(request.routeId());
+
+        validateAircraftBelongsToAirline(aircraft, airline);
+
+        flightMapper.updateEntity(request, flight);
+        flight.setAirline(airline);
+        flight.setAircraft(aircraft);
+        flight.setRoute(route);
+
+        return flightMapper.toResponse(flightRepository.save(flight));
+    }
+
+    @Transactional
+    public FlightResponse updateFlightStatus(Long id, FlightStatusUpdateRequest request) {
+        Flight flight = findFlightById(id);
+
+        if (request.status() == com.aerobook.domain.enums.FlightStatus.DELAYED
+                && (request.delayMinutes() == null || request.delayMinutes() <= 0)) {
+            throw new AeroBookException(
+                    "Delay minutes must be provided and positive when status is DELAYED",
+                    HttpStatus.BAD_REQUEST,
+                    "INVALID_DELAY"
+            );
+        }
+
+        flight.setStatus(request.status());
+        flight.setDelayMinutes(request.delayMinutes());
+
+        return flightMapper.toResponse(flightRepository.save(flight));
+    }
+
+    @Transactional
+    public void deleteFlight(Long id) {
+        if (!flightRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Flight", id);
+        }
+        flightRepository.deleteById(id);
+    }
+
+    public Flight findFlightById(Long id) {
+        return flightRepository.findByIdWithDetails(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Flight", id));
+    }
+
+    private void validateFlightNumberUnique(String flightNumber,
+                                            java.time.LocalDate departureDate) {
+        if (flightRepository.existsByFlightNumberAndDepartureDate(
+                flightNumber, departureDate)) {
+            throw new DuplicateResourceException(
+                    "Flight", "flightNumber + departureDate",
+                    flightNumber + " on " + departureDate);
+        }
+    }
+
+    private void validateAircraftBelongsToAirline(Aircraft aircraft, Airline airline) {
+        if (!aircraft.getAirline().getId().equals(airline.getId())) {
+            throw new AeroBookException(
+                    "Aircraft " + aircraft.getRegistrationNumber()
+                            + " does not belong to airline " + airline.getIataCode(),
+                    HttpStatus.BAD_REQUEST,
+                    "AIRCRAFT_AIRLINE_MISMATCH"
+            );
+        }
+    }
+
+    public boolean existsByFlightNumberAndDate(String flightNumber, LocalDate date) {
+        return flightRepository.existsByFlightNumberAndDepartureDate(flightNumber, date);
+    }
+}

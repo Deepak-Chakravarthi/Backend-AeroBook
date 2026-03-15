@@ -29,7 +29,6 @@ public class RouteService {
 
     private final RouteRepository routeRepository;
     private final RouteMapper routeMapper;
-    private final AirportService airportService;
     private final AirportQueryService airportQueryService;
 
     /**
@@ -100,5 +99,10 @@ public class RouteService {
             throw new ResourceNotFoundException("Route", id);
         }
         routeRepository.deleteById(id);
+    }
+
+    public Route findRouteById(Long id) {
+        return routeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Route", id));
     }
 }
