@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
@@ -91,7 +92,7 @@ public class ControllerSecurityAspect {
                                              String httpMethod,
                                              String uri) {
         if (!hasPreAuthorize(method)) {
-            log.warn("BLOCKED — CUD endpoint missing @PreAuthorize: {} {}", httpMethod, uri);
+            log.warn("BLOCKED — endpoint @PreAuthorize: {} {}", httpMethod, uri);
             throw new AeroBookException(
                     "Access denied — endpoint not configured for access",
                     HttpStatus.FORBIDDEN,
@@ -109,7 +110,7 @@ public class ControllerSecurityAspect {
     private void validateAuthenticated(String httpMethod, String uri) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (isNotAuthenticated(auth)) {
-            log.warn("BLOCKED — unauthenticated CUD request: {} {}", httpMethod, uri);
+            log.warn("BLOCKED — unauthenticated request: {} {}", httpMethod, uri);
             throw new AeroBookException(
                     "Access denied — authentication required",
                     HttpStatus.UNAUTHORIZED,
@@ -124,8 +125,23 @@ public class ControllerSecurityAspect {
 
 
     private boolean hasPreAuthorize(Method method) {
-        return method.isAnnotationPresent(PreAuthorize.class)
-                || method.getDeclaringClass().isAnnotationPresent(PreAuthorize.class);
+        if (method.isAnnotationPresent(PreAuthorize.class)) return true;
+
+        if (method.getDeclaringClass().isAnnotationPresent(PreAuthorize.class)) return true;
+
+        for (Annotation annotation : method.getAnnotations()) {
+            if (annotation.annotationType().isAnnotationPresent(PreAuthorize.class)) {
+                return true;
+            }
+        }
+
+        for (Annotation annotation : method.getDeclaringClass().getAnnotations()) {
+            if (annotation.annotationType().isAnnotationPresent(PreAuthorize.class)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean isNotAuthenticated(Authentication auth) {
