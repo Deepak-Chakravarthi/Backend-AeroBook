@@ -1,5 +1,6 @@
 package com.aerobook.mapper;
 
+import com.aerobook.domain.dto.request.UserUpdateRequest;
 import com.aerobook.enitity.Role;
 import com.aerobook.enitity.User;
 import com.aerobook.domain.dto.request.RegisterRequest;
@@ -20,6 +21,17 @@ public interface UserMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     User toEntity(RegisterRequest request);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id",        ignore = true)
+    @Mapping(target = "username",  ignore = true)   // username not updatable
+    @Mapping(target = "email",     ignore = true)   // email not updatable
+    @Mapping(target = "password",  ignore = true)
+    @Mapping(target = "status",    ignore = true)
+    @Mapping(target = "roles",     ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    void updateEntity(UserUpdateRequest request, @MappingTarget User user);
 
     @Mapping(target = "roles", expression = "java(mapRoles(user.getRoles()))")
     UserResponse toResponse(User user);
