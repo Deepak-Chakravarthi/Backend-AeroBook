@@ -11,6 +11,11 @@ spring:
     show-sql: false
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2000ms
 
 server:
   port: 8091
@@ -21,4 +26,8 @@ aerobook:
   jwt:
     secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
     expiration-ms: 86400000   # 24 hours
+
+  seat:
+    hold-duration-minutes: 15    # seat hold TTL
+
 

@@ -16,7 +16,7 @@ import com.aerobook.mapper.FlightMapper;
 import com.aerobook.repository.FlightRepository;
 import com.aerobook.service.query.AircraftQueryService;
 import com.aerobook.service.query.AirlineQueryService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,6 @@ import java.util.List;
  * The type Flight service.
  */
 @Service
-@RequiredArgsConstructor
 public class FlightService {
 
     private final FlightRepository flightRepository;
@@ -37,6 +36,27 @@ public class FlightService {
     private final AirlineQueryService airlineQueryService;
     private final AircraftQueryService aircraftQueryService;
     private final RouteService routeService;
+    @Lazy
+    private final SeatInventoryService seatInventoryService;
+    @Lazy
+    private final SeatService seatService;
+
+    public FlightService(
+            FlightRepository flightRepository,
+            FlightMapper flightMapper,
+            AirlineQueryService airlineQueryService,
+            AircraftQueryService aircraftQueryService,
+            RouteService routeService,
+            @Lazy SeatInventoryService seatInventoryService,
+            @Lazy SeatService seatService) {
+        this.flightRepository      = flightRepository;
+        this.flightMapper          = flightMapper;
+        this.airlineQueryService        = airlineQueryService;
+        this.aircraftQueryService       = aircraftQueryService;
+        this.routeService          = routeService;
+        this.seatInventoryService  = seatInventoryService;
+        this.seatService           = seatService;
+    }
 
     /**
      * Gets flights.
@@ -83,7 +103,11 @@ public class FlightService {
         flight.setRoute(route);
         flight.setCreatedAt(java.time.LocalDateTime.now());
 
-        return flightMapper.toResponse(flightRepository.save(flight));
+        Flight savedFlight = flightRepository.save(flight);
+        seatInventoryService.initializeInventory(savedFlight);
+        seatService.generateSeatMap(savedFlight);
+
+        return flightMapper.toResponse(savedFlight);
     }
 
     /**
