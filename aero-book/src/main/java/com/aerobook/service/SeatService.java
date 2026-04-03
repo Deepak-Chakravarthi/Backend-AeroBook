@@ -28,8 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -82,89 +84,183 @@ public class SeatService {
                 seats.size(), flight.getFlightNumber());
     }
 
-    // ----------------------------------------------------------------
-    // Hold seats — Redis TTL + inventory update
-    // ----------------------------------------------------------------
     @Transactional
     public SeatHoldResponse holdSeats(SeatHoldRequest request) {
-        Flight flight = flightService.findFlightById(request.flightId());
 
-        // Step 1 — check Redis for existing hold (race condition guard)
-        validateNoActiveHold(request.flightId(), request.seatClass());
+        String lockKey = "lock:seat:hold:" + request.flightId();
 
-        // Step 2 — hold at inventory level (optimistic locking)
-        inventoryService.holdSeats(
-                request.flightId(), request.seatClass(), request.seatCount());
+        Boolean lockAcquired = redisTemplate.opsForValue()
+                .setIfAbsent(lockKey, "LOCKED", 10, TimeUnit.SECONDS);
 
-        // Step 3 — allocate specific physical seats
-        List<Seat> allocatedSeats = allocatePhysicalSeats(
-                request.flightId(), request.seatClass(),
-                request.seatCount(), request.preferredSeatNumber());
-
-        // Step 4 — generate booking reference
-        String bookingRef = generateBookingRef();
-        LocalDateTime holdUntil = LocalDateTime.now()
-                .plusMinutes(holdDurationMinutes);
-
-        // Step 5 — hold each physical seat with TTL
-        allocatedSeats.forEach(seat -> {
-            seat.hold(bookingRef, holdUntil);
-            seatRepository.save(seat);
-        });
-
-        // Step 6 — store hold metadata in Redis with TTL
-        storeHoldInRedis(request.flightId(), bookingRef,
-                request.seatClass(), request.seatCount(), holdUntil);
-
-        List<String> seatNumbers = allocatedSeats.stream()
-                .map(Seat::getSeatNumber)
-                .toList();
-
-        log.info("Held {} seats on flight {} class {} — ref: {} until {}",
-                request.seatCount(), request.flightId(),
-                request.seatClass(), bookingRef, holdUntil);
-
-        return new SeatHoldResponse(
-                bookingRef,
-                flight.getId(),
-                flight.getFlightNumber(),
-                request.seatClass(),
-                request.seatCount(),
-                seatNumbers,
-                holdUntil,
-                inventoryService.findInventory(
-                        request.flightId(), request.seatClass()).getAvailableSeats()
-        );
-    }
-
-    // ----------------------------------------------------------------
-    // Release held seats — manual release or on booking cancellation
-    // ----------------------------------------------------------------
-    @Transactional
-    public void releaseSeats(SeatReleaseRequest request) {
-        List<Seat> heldSeats = seatRepository.findAllByBookingRef(
-                request.bookingRef());
-
-        if (heldSeats.isEmpty()) {
-            log.warn("No held seats found for booking ref: {}", request.bookingRef());
-            return;
+        if (Boolean.FALSE.equals(lockAcquired)) {
+            throw new AeroBookException(
+                    "Another booking is in progress. Please try again.",
+                    HttpStatus.CONFLICT,
+                    "SEAT_LOCKED"
+            );
         }
 
-        // Group by class to update inventory
-        heldSeats.stream()
-                .collect(java.util.stream.Collectors.groupingBy(Seat::getSeatClass))
-                .forEach((seatClass, seats) -> {
-                    seats.forEach(Seat::release);
-                    seatRepository.saveAll(seats);
-                    inventoryService.releaseHeldSeats(
-                            request.flightId(), seatClass, seats.size());
-                });
+        try {
+            // 1. Fetch flight
+            Flight flight = flightService.findFlightById(request.flightId());
 
-        // Remove from Redis
-        removeHoldFromRedis(request.flightId(), request.bookingRef());
+            // 2. Generate booking ref early (needed for seat assignment)
+            String bookingRef = generateBookingRef();
 
-        log.info("Released {} seats for booking ref: {}",
-                heldSeats.size(), request.bookingRef());
+            LocalDateTime holdUntil = LocalDateTime.now()
+                    .plusMinutes(holdDurationMinutes);
+
+            // 3. Hold inventory (optimistic locking + retry)
+            inventoryService.holdSeats(
+                    request.flightId(),
+                    request.seatClass(),
+                    request.seatCount()
+            );
+
+            // 4. Allocate and HOLD physical seats (pessimistic lock)
+            List<Seat> allocatedSeats = allocatePhysicalSeats(
+                    request.flightId(),
+                    request.seatClass(),
+                    request.seatCount(),
+                    request.preferredSeatNumber(),
+                    bookingRef,
+                    holdUntil
+            );
+
+            // 5. Store hold in Redis (TTL)
+            storeHoldInRedis(
+                    request.flightId(),
+                    bookingRef,
+                    request.seatClass(),
+                    request.seatCount(),
+                    holdUntil
+            );
+
+            // 6. Prepare response
+            List<String> seatNumbers = allocatedSeats.stream()
+                    .map(Seat::getSeatNumber)
+                    .toList();
+
+            int remainingSeats = inventoryService
+                    .findInventory(request.flightId(), request.seatClass())
+                    .getAvailableSeats();
+
+            log.info("Held {} seats on flight {} class {} — ref: {} until {}",
+                    request.seatCount(),
+                    request.flightId(),
+                    request.seatClass(),
+                    bookingRef,
+                    holdUntil);
+
+            return new SeatHoldResponse(
+                    bookingRef,
+                    flight.getId(),
+                    flight.getFlightNumber(),
+                    request.seatClass(),
+                    request.seatCount(),
+                    seatNumbers,
+                    holdUntil,
+                    remainingSeats
+            );
+
+        } catch (Exception e) {
+            inventoryService.releaseHeldSeats(
+                    request.flightId(),
+                    request.seatClass(),
+                    request.seatCount()
+            );
+            throw e;
+
+        } finally {
+            redisTemplate.delete(lockKey);
+        }
+    }
+
+    @Transactional
+    public void releaseSeats(SeatReleaseRequest request) {
+
+        String lockKey = "lock:seat:release:" + request.bookingRef();
+
+        Boolean lockAcquired = redisTemplate.opsForValue()
+                .setIfAbsent(lockKey, "LOCKED", 10, TimeUnit.SECONDS);
+
+        if (Boolean.FALSE.equals(lockAcquired)) {
+            throw new AeroBookException(
+                    "Release already in progress",
+                    HttpStatus.CONFLICT,
+                    "RELEASE_LOCKED"
+            );
+        }
+
+        try {
+            // 🔐 Fetch seats WITH DB lock
+            List<Seat> heldSeats = seatRepository
+                    .findAllByBookingRefForUpdate(request.bookingRef());
+
+            if (heldSeats.isEmpty()) {
+                log.warn("No held seats found for booking ref: {}", request.bookingRef());
+                return;
+            }
+
+            // ✅ Idempotency check (VERY IMPORTANT)
+            boolean alreadyReleased = heldSeats.stream()
+                    .allMatch(seat -> seat.getStatus() == SeatStatus.AVAILABLE);
+
+            if (alreadyReleased) {
+                log.warn("Seats already released for booking ref: {}", request.bookingRef());
+                return;
+            }
+
+            // 🔁 Group by class (same as your logic)
+            Map<SeatClass, List<Seat>> groupedSeats = heldSeats.stream()
+                    .collect(Collectors.groupingBy(Seat::getSeatClass));
+
+            for (Map.Entry<SeatClass, List<Seat>> entry : groupedSeats.entrySet()) {
+
+                SeatClass seatClass = entry.getKey();
+                List<Seat> seats = entry.getValue();
+
+                // 🔓 Release seats (atomic)
+                seats.forEach(Seat::release);
+                seatRepository.saveAll(seats);
+
+                // ➕ Restore inventory
+                inventoryService.releaseHeldSeats(
+                        request.flightId(),
+                        seatClass,
+                        seats.size()
+                );
+
+                // ➖ Decrement Redis counter (if used in hold)
+                decrementHoldCounter(request.flightId(), seatClass, seats.size());
+            }
+
+            // 🧹 Remove Redis hold
+            removeHoldFromRedis(request.flightId(), request.bookingRef());
+
+            log.info("Released {} seats for booking ref: {}",
+                    heldSeats.size(), request.bookingRef());
+
+        } finally {
+            redisTemplate.delete(lockKey);
+        }
+    }
+
+    private void decrementHoldCounter(Long flightId,
+                                      SeatClass seatClass,
+                                      int count) {
+
+        String key = "seat:hold:count:" + flightId + ":" + seatClass;
+
+        Object value = redisTemplate.opsForValue().get(key);
+
+        Long current = (value instanceof Number)
+                ? ((Number) value).longValue()
+                : null;
+
+        if (current != null) {
+            redisTemplate.opsForValue().decrement(key, count);
+        }
     }
 
     // ----------------------------------------------------------------
@@ -252,28 +348,60 @@ public class SeatService {
         return SeatType.MIDDLE;
     }
 
-    private List<Seat> allocatePhysicalSeats(Long flightId, SeatClass seatClass,
-                                             int count, String preferredSeat) {
-        // If specific seat requested — try to allocate it first
+    private List<Seat> allocatePhysicalSeats(Long flightId,
+                                             SeatClass seatClass,
+                                             int count,
+                                             String preferredSeat,
+                                             String bookingRef,
+                                             LocalDateTime holdUntil) {
+
+        List<Seat> selectedSeats;
+
+        // 1. Preferred seat flow
         if (preferredSeat != null) {
-            return allocatePreferredSeat(flightId, preferredSeat, count);
+
+            Seat seat = seatRepository.findBySeatNumberForUpdate(flightId, preferredSeat)
+                    .orElseThrow(() -> new AeroBookException(
+                            "Preferred seat not found",
+                            HttpStatus.NOT_FOUND,
+                            "SEAT_NOT_FOUND"
+                    ));
+
+            if (seat.getStatus() != SeatStatus.AVAILABLE) {
+                throw new AeroBookException(
+                        "Preferred seat not available",
+                        HttpStatus.CONFLICT,
+                        "SEAT_NOT_AVAILABLE"
+                );
+            }
+
+            selectedSeats = List.of(seat);
+
+        } else {
+            // 2. Auto allocation with DB lock
+            List<Seat> available = seatRepository
+                    .findAvailableSeatsForUpdate(flightId, seatClass);
+
+            if (available.size() < count) {
+                throw new AeroBookException(
+                        "Insufficient physical seats available. Requested: "
+                                + count + ", Available: " + available.size(),
+                        HttpStatus.CONFLICT,
+                        "INSUFFICIENT_SEATS"
+                );
+            }
+
+            selectedSeats = available.subList(0, count);
         }
 
-        // Auto-allocate from available seats
-        List<Seat> available = seatRepository
-                .findAllByFlightIdAndSeatClassAndStatus(
-                        flightId, seatClass, SeatStatus.AVAILABLE);
-
-        if (available.size() < count) {
-            throw new AeroBookException(
-                    "Insufficient physical seats available. " +
-                            "Requested: " + count + ", Available: " + available.size(),
-                    HttpStatus.CONFLICT,
-                    "INSUFFICIENT_SEATS"
-            );
+        // 3. Atomic seat update (CRITICAL)
+        for (Seat seat : selectedSeats) {
+            seat.setStatus(SeatStatus.HELD);
+            seat.setHeldByBookingRef(bookingRef);
+            seat.setHeldUntil(holdUntil);
         }
 
-        return available.subList(0, count);
+        return seatRepository.saveAll(selectedSeats);
     }
 
     private List<Seat> allocatePreferredSeat(Long flightId,
@@ -302,28 +430,48 @@ public class SeatService {
         }
     }
 
-    private void storeHoldInRedis(Long flightId, String bookingRef,
-                                  SeatClass seatClass, int count,
+    private void storeHoldInRedis(Long flightId,
+                                  String bookingRef,
+                                  SeatClass seatClass,
+                                  int count,
                                   LocalDateTime holdUntil) {
-        String key = String.format(SEAT_HOLD_KEY, flightId, bookingRef);
-        java.util.Map<String, Object> holdData = java.util.Map.of(
-                "flightId",   flightId,
+
+        String key = String.format("seat:hold:%d:%s", flightId, bookingRef);
+
+        Map<String, Object> holdData = Map.of(
+                "flightId", flightId,
                 "bookingRef", bookingRef,
-                "seatClass",  seatClass.name(),
-                "count",      count,
-                "holdUntil",  holdUntil.toString()
+                "seatClass", seatClass.name(),
+                "count", count,
+                "holdUntil", holdUntil.toString()
         );
+
         redisTemplate.opsForHash().putAll(key, holdData);
+
+        // TTL
         redisTemplate.expire(key, holdDurationMinutes, TimeUnit.MINUTES);
-        log.debug("Stored seat hold in Redis: key={}, TTL={}min", key, holdDurationMinutes);
+
+        // ✅ Optional: hold counter (better tracking)
+        String counterKey = "seat:hold:count:" + flightId + ":" + seatClass;
+
+        redisTemplate.opsForValue().increment(counterKey, count);
+        redisTemplate.expire(counterKey, holdDurationMinutes, TimeUnit.MINUTES);
+
+        log.debug("Stored hold in Redis: key={}, TTL={}min", key, holdDurationMinutes);
     }
 
     private void removeHoldFromRedis(Long flightId, String bookingRef) {
-        String key = String.format(SEAT_HOLD_KEY, flightId, bookingRef);
-        redisTemplate.delete(key);
-        log.debug("Removed seat hold from Redis: key={}", key);
-    }
 
+        String key = String.format(SEAT_HOLD_KEY, flightId, bookingRef);
+
+        Boolean deleted = redisTemplate.delete(key);
+
+        if (Boolean.TRUE.equals(deleted)) {
+            log.debug("Removed seat hold from Redis: key={}", key);
+        } else {
+            log.warn("Redis hold key not found or already deleted: key={}", key);
+        }
+    }
     private String generateBookingRef() {
         return "HOLD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }

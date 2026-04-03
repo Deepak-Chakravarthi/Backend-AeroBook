@@ -101,9 +101,19 @@ public class SeatInventoryService {
     // ----------------------------------------------------------------
     @Transactional
     public void releaseHeldSeats(Long flightId, SeatClass seatClass, int count) {
+
         SeatInventory inventory = findInventory(flightId, seatClass);
+
+        // ✅ Safety check (important)
+        if (count <= 0) {
+            log.warn("Invalid release count: {}", count);
+            return;
+        }
+
         inventory.releaseHeldSeats(count);
+
         inventoryRepository.save(inventory);
+
         log.info("Released {} held seats for flight {} class {}",
                 count, flightId, seatClass);
     }
