@@ -1,5 +1,7 @@
 package com.aerobook.config;
 
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -12,13 +14,18 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(
-            RedisConnectionFactory connectionFactory) {
+            RedisConnectionFactory connectionFactory,
+            ObjectMapper objectMapper) {             // injects YOUR ObjectMapper bean
+
+        GenericJackson2JsonRedisSerializer serializer =
+                new GenericJackson2JsonRedisSerializer(objectMapper);
+
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setValueSerializer(serializer);
+        template.setHashValueSerializer(serializer);
         template.afterPropertiesSet();
         return template;
     }
