@@ -4,7 +4,9 @@ package com.aerobook.domain.dto.request;
 import com.aerobook.domain.enums.SeatClass;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
+@Builder
 public record SeatHoldRequest(
 
         @NotNull(message = "Flight ID is required")
