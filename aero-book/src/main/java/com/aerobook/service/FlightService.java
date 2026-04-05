@@ -40,6 +40,8 @@ public class FlightService {
     private final SeatInventoryService seatInventoryService;
     @Lazy
     private final SeatService seatService;
+    @Lazy
+    private final FlightSearchCacheService flightSearchCacheService;
 
     public FlightService(
             FlightRepository flightRepository,
@@ -48,7 +50,8 @@ public class FlightService {
             AircraftQueryService aircraftQueryService,
             RouteService routeService,
             @Lazy SeatInventoryService seatInventoryService,
-            @Lazy SeatService seatService) {
+            @Lazy SeatService seatService,
+            @Lazy FlightSearchCacheService flightSearchCacheService) {
         this.flightRepository      = flightRepository;
         this.flightMapper          = flightMapper;
         this.airlineQueryService        = airlineQueryService;
@@ -56,6 +59,7 @@ public class FlightService {
         this.routeService          = routeService;
         this.seatInventoryService  = seatInventoryService;
         this.seatService           = seatService;
+        this.flightSearchCacheService = flightSearchCacheService;
     }
 
     /**
@@ -137,7 +141,12 @@ public class FlightService {
         flight.setAircraft(aircraft);
         flight.setRoute(route);
 
-        return flightMapper.toResponse(flightRepository.save(flight));
+        FlightResponse response = flightMapper.toResponse(flightRepository.save(flight));
+
+        // Evict search cache for this route
+        evictSearchCache(flight);
+
+        return response;
     }
 
     /**
@@ -163,7 +172,11 @@ public class FlightService {
         flight.setStatus(request.status());
         flight.setDelayMinutes(request.delayMinutes());
 
-        return flightMapper.toResponse(flightRepository.save(flight));
+        FlightResponse response = flightMapper.toResponse(flightRepository.save(flight));
+
+        evictSearchCache(flight);
+
+        return response;
     }
 
     /**
@@ -221,4 +234,13 @@ public class FlightService {
     public boolean existsByFlightNumberAndDate(String flightNumber, LocalDate date) {
         return flightRepository.existsByFlightNumberAndDepartureDate(flightNumber, date);
     }
+
+    private void evictSearchCache(Flight flight) {
+        String origin      = flight.getRoute().getOrigin().getIataCode();
+        String destination = flight.getRoute().getDestination().getIataCode();
+        // Evict all search cache entries for this route
+        flightSearchCacheService.evictByPattern(
+                "search:*:" + origin + ":" + destination + ":*");
+    }
+
 }
