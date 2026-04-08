@@ -30,4 +30,15 @@ aerobook:
   seat:
     hold-duration-minutes: 15    # seat hold TTL
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    try-it-out-enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
 

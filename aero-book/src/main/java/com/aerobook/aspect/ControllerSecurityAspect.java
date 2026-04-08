@@ -19,6 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Set;
 
 /**
  * The type Controller security aspect.
@@ -27,6 +28,14 @@ import java.lang.reflect.Method;
 @Aspect
 @Component
 public class ControllerSecurityAspect {
+
+    private static final Set<String> WHITELISTED_URI_PREFIXES = Set.of(
+            "/v3/api-docs",
+            "/swagger-ui",
+            "/swagger-resources",
+            "/webjars"
+    );
+
 
     /**
      * Rest controller methods.
@@ -50,6 +59,10 @@ public class ControllerSecurityAspect {
 
         log.debug("ControllerSecurityAspect — {} {}", httpMethod, uri);
 
+        if (isWhitelisted(uri)) {
+            return joinPoint.proceed();
+        }
+
         if (isExempt(method)) {
             return handleExemptAccess(joinPoint, method, uri);
         }
@@ -60,6 +73,11 @@ public class ControllerSecurityAspect {
 
         log.debug("Access granted — proceeding: {}", uri);
         return joinPoint.proceed();
+    }
+
+    private boolean isWhitelisted(String uri) {
+        return WHITELISTED_URI_PREFIXES.stream()
+                .anyMatch(uri::startsWith);
     }
 
     /**
