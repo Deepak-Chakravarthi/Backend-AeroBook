@@ -1,6 +1,6 @@
 package com.aerobook.repository;
 
-import com.aerobook.enitity.FlightFare;
+import com.aerobook.entity.FlightFare;
 import com.aerobook.domain.enums.SeatClass;
 import org.springframework.data.jpa.repository.JpaRepository;
 

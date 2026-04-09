@@ -1,8 +1,7 @@
 package com.aerobook.repository;
 
 
-import com.aerobook.enitity.Refund;
-import com.aerobook.domain.enums.RefundStatus;
+import com.aerobook.entity.Refund;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

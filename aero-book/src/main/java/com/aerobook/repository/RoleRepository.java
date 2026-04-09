@@ -1,7 +1,7 @@
 package com.aerobook.repository;
 
 
-import com.aerobook.enitity.Role;
+import com.aerobook.entity.Role;
 import com.aerobook.domain.enums.RoleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 

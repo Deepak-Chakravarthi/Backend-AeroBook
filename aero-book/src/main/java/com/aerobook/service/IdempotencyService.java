@@ -1,7 +1,7 @@
 package com.aerobook.service;
 
 
-import com.aerobook.enitity.IdempotencyRecord;
+import com.aerobook.entity.IdempotencyRecord;
 import com.aerobook.repository.IdempotencyRecordRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

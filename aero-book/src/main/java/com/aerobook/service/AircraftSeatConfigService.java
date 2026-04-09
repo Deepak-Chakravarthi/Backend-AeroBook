@@ -2,8 +2,8 @@ package com.aerobook.service;
 
 import com.aerobook.domain.dto.request.AircraftSeatConfigRequest;
 import com.aerobook.domain.dto.response.AircraftSeatConfigResponse;
-import com.aerobook.enitity.Aircraft;
-import com.aerobook.enitity.AircraftSeatConfig;
+import com.aerobook.entity.Aircraft;
+import com.aerobook.entity.AircraftSeatConfig;
 import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AircraftSeatConfigMapper;

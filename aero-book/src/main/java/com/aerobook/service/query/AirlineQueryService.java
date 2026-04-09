@@ -1,6 +1,6 @@
 package com.aerobook.service.query;
 
-import com.aerobook.enitity.Airline;
+import com.aerobook.entity.Airline;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.repository.AirlineRepository;
 import lombok.AllArgsConstructor;

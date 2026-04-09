@@ -3,7 +3,7 @@ package com.aerobook.mapper;
 
 import com.aerobook.domain.dto.request.AircraftSeatConfigRequest;
 import com.aerobook.domain.dto.response.AircraftSeatConfigResponse;
-import com.aerobook.enitity.AircraftSeatConfig;
+import com.aerobook.entity.AircraftSeatConfig;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

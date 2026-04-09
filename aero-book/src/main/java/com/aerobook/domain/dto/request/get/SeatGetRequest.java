@@ -1,7 +1,7 @@
 package com.aerobook.domain.dto.request.get;
 
 
-import com.aerobook.enitity.Seat;
+import com.aerobook.entity.Seat;
 import com.aerobook.domain.enums.SeatClass;
 import com.aerobook.domain.enums.SeatStatus;
 import com.aerobook.domain.enums.SeatType;

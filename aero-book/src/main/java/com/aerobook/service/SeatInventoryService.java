@@ -1,9 +1,9 @@
 package com.aerobook.service;
 
 
-import com.aerobook.enitity.Flight;
-import com.aerobook.enitity.FlightFare;
-import com.aerobook.enitity.SeatInventory;
+import com.aerobook.entity.Flight;
+import com.aerobook.entity.FlightFare;
+import com.aerobook.entity.SeatInventory;
 import com.aerobook.domain.dto.response.SeatInventoryResponse;
 import com.aerobook.domain.enums.SeatClass;
 import com.aerobook.exception.AeroBookException;

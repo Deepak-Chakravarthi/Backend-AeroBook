@@ -1,7 +1,7 @@
 package com.aerobook.domain.dto.request.get;
 
 
-import com.aerobook.enitity.Flight;
+import com.aerobook.entity.Flight;
 import com.aerobook.domain.enums.FlightStatus;
 import com.aerobook.util.Jpa.SpecificationBuilder;
 import lombok.Builder;

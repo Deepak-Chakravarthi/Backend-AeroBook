@@ -1,7 +1,7 @@
 package com.aerobook.repository;
 
 
-import com.aerobook.enitity.IdempotencyRecord;
+import com.aerobook.entity.IdempotencyRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

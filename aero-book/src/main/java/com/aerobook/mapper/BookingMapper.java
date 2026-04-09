@@ -1,7 +1,7 @@
 package com.aerobook.mapper;
 
 
-import com.aerobook.enitity.Booking;
+import com.aerobook.entity.Booking;
 import com.aerobook.domain.dto.response.BookingResponse;
 import com.aerobook.domain.dto.response.BookingSummaryResponse;
 import org.mapstruct.Mapper;

@@ -1,6 +1,6 @@
 package com.aerobook.domain.dto.request.get;
 
-import com.aerobook.enitity.Airport;
+import com.aerobook.entity.Airport;
 import com.aerobook.util.Jpa.SpecificationBuilder;
 import lombok.Builder;
 import lombok.Getter;

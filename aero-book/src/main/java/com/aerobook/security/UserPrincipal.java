@@ -1,7 +1,7 @@
 package com.aerobook.security;
 
 
-import com.aerobook.enitity.User;
+import com.aerobook.entity.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,8 +1,7 @@
 package com.aerobook.domain.dto.request.get;
 
 
-import com.aerobook.domain.enums.RoleType;
-import com.aerobook.enitity.User;
+import com.aerobook.entity.User;
 import com.aerobook.domain.enums.UserStatus;
 import com.aerobook.util.Jpa.SpecificationBuilder;
 import lombok.Builder;

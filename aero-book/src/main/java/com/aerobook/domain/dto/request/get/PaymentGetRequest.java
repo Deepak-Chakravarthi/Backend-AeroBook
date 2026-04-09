@@ -1,7 +1,7 @@
 package com.aerobook.domain.dto.request.get;
 
 
-import com.aerobook.enitity.Payment;
+import com.aerobook.entity.Payment;
 import com.aerobook.domain.enums.PaymentMethod;
 import com.aerobook.domain.enums.PaymentStatus;
 import com.aerobook.util.Jpa.SpecificationBuilder;

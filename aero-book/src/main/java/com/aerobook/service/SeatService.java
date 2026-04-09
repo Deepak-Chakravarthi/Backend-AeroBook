@@ -1,9 +1,9 @@
 package com.aerobook.service;
 
 
-import com.aerobook.enitity.AircraftSeatConfig;
-import com.aerobook.enitity.Flight;
-import com.aerobook.enitity.Seat;
+import com.aerobook.entity.AircraftSeatConfig;
+import com.aerobook.entity.Flight;
+import com.aerobook.entity.Seat;
 import com.aerobook.domain.dto.request.get.SeatGetRequest;
 import com.aerobook.domain.dto.request.SeatHoldRequest;
 import com.aerobook.domain.dto.request.SeatReleaseRequest;

@@ -1,8 +1,8 @@
 package com.aerobook.mapper;
 
 
-import com.aerobook.enitity.Payment;
-import com.aerobook.enitity.Refund;
+import com.aerobook.entity.Payment;
+import com.aerobook.entity.Refund;
 import com.aerobook.domain.dto.response.PaymentResponse;
 import com.aerobook.domain.dto.response.RefundResponse;
 import org.mapstruct.Mapper;

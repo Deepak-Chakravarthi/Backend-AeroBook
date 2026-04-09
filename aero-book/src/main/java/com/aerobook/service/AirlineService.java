@@ -3,7 +3,7 @@ package com.aerobook.service;
 import com.aerobook.domain.dto.request.AirlineRequest;
 import com.aerobook.domain.dto.request.get.AirlineGetRequest;
 import com.aerobook.domain.dto.response.AirlineResponse;
-import com.aerobook.enitity.Airline;
+import com.aerobook.entity.Airline;
 import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AirlineMapper;

@@ -1,6 +1,6 @@
 package com.aerobook.repository;
 
-import com.aerobook.enitity.Passenger;
+import com.aerobook.entity.Passenger;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;

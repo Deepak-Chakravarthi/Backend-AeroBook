@@ -1,7 +1,7 @@
 package com.aerobook.repository;
 
 
-import com.aerobook.enitity.Ticket;
+import com.aerobook.entity.Ticket;
 import com.aerobook.domain.enums.TicketStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

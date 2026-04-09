@@ -2,7 +2,7 @@ package com.aerobook.repository;
 
 
 import com.aerobook.domain.enums.SeatClass;
-import com.aerobook.enitity.AircraftSeatConfig;
+import com.aerobook.entity.AircraftSeatConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

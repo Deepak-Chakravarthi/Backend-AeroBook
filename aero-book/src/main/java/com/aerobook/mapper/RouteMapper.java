@@ -3,7 +3,7 @@ package com.aerobook.mapper;
 
 import com.aerobook.domain.dto.request.RouteRequest;
 import com.aerobook.domain.dto.response.RouteResponse;
-import com.aerobook.enitity.Route;
+import com.aerobook.entity.Route;
 import org.mapstruct.*;
 
 /**

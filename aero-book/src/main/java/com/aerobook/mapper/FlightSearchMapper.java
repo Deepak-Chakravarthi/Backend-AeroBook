@@ -1,12 +1,11 @@
 package com.aerobook.mapper;
 
 
-import com.aerobook.enitity.Flight;
-import com.aerobook.enitity.FlightFare;
+import com.aerobook.entity.Flight;
+import com.aerobook.entity.FlightFare;
 import com.aerobook.domain.dto.response.FareSearchResult;
 import com.aerobook.domain.dto.response.FlightSearchResultItem;
 import com.aerobook.domain.enums.CabinClass;
-import com.aerobook.domain.enums.SeatClass;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

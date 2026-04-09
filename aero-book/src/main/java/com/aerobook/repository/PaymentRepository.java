@@ -1,7 +1,7 @@
 package com.aerobook.repository;
 
 
-import com.aerobook.enitity.Payment;
+import com.aerobook.entity.Payment;
 import com.aerobook.domain.enums.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

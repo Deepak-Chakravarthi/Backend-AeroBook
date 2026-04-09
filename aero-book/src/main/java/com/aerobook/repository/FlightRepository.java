@@ -1,6 +1,6 @@
 package com.aerobook.repository;
 
-import com.aerobook.enitity.Flight;
+import com.aerobook.entity.Flight;
 import com.aerobook.domain.enums.FlightStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

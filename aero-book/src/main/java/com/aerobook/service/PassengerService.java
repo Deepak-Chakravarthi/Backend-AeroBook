@@ -1,8 +1,8 @@
 package com.aerobook.service;
 
-import com.aerobook.enitity.Booking;
-import com.aerobook.enitity.Passenger;
-import com.aerobook.enitity.User;
+import com.aerobook.entity.Booking;
+import com.aerobook.entity.Passenger;
+import com.aerobook.entity.User;
 import com.aerobook.domain.dto.request.get.PassengerGetRequest;
 import com.aerobook.domain.dto.request.PassengerRequest;
 import com.aerobook.domain.dto.response.PassengerResponse;

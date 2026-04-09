@@ -4,7 +4,7 @@ package com.aerobook.service;
 import com.aerobook.domain.dto.request.AirportRequest;
 import com.aerobook.domain.dto.request.get.AirportGetRequest;
 import com.aerobook.domain.dto.response.AirportResponse;
-import com.aerobook.enitity.Airport;
+import com.aerobook.entity.Airport;
 import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.AirportMapper;

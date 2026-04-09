@@ -1,13 +1,12 @@
 package com.aerobook.service;
 
 
-import com.aerobook.enitity.Flight;
+import com.aerobook.entity.Flight;
 import com.aerobook.domain.dto.request.FlightLegRequest;
 import com.aerobook.domain.dto.request.FlightSearchRequest;
 import com.aerobook.domain.dto.response.FlightSearchResponse;
 import com.aerobook.domain.dto.response.FlightSearchResultItem;
 import com.aerobook.domain.enums.TripType;
-import com.aerobook.enitity.Flight;
 import com.aerobook.mapper.FlightSearchMapper;
 import com.aerobook.repository.FlightSearchRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,10 +91,10 @@ public class FlightSearchService {
     // ----------------------------------------------------------------
     private FlightSearchResponse searchReturn(FlightSearchRequest request) {
         // Outbound — origin → destination
-        List<com.aerobook.enitity.Flight> outboundFlights = resolveOneWayFlights(request);
+        List<com.aerobook.entity.Flight> outboundFlights = resolveOneWayFlights(request);
 
         // Inbound — destination → origin on return date
-        List<com.aerobook.enitity.Flight> inboundFlights = flightSearchRepository.searchReturn(
+        List<com.aerobook.entity.Flight> inboundFlights = flightSearchRepository.searchReturn(
                 request.getDestinationCode(),
                 request.getOriginCode(),
                 request.getReturnDate()
@@ -142,7 +140,7 @@ public class FlightSearchService {
         List<List<FlightSearchResultItem>> multiCityLegs = new ArrayList<>();
 
         for (FlightLegRequest leg : request.getLegs()) {
-            List<com.aerobook.enitity.Flight> legFlights = flightSearchRepository.searchLeg(
+            List<com.aerobook.entity.Flight> legFlights = flightSearchRepository.searchLeg(
                     leg.getOriginCode().toUpperCase(),
                     leg.getDestinationCode().toUpperCase(),
                     leg.getDepartureDate()
@@ -183,7 +181,7 @@ public class FlightSearchService {
     // Private helpers
     // ----------------------------------------------------------------
 
-    private List<com.aerobook.enitity.Flight> resolveOneWayFlights(FlightSearchRequest request) {
+    private List<com.aerobook.entity.Flight> resolveOneWayFlights(FlightSearchRequest request) {
         String origin      = request.getOriginCode().toUpperCase();
         String destination = request.getDestinationCode().toUpperCase();
 
@@ -202,7 +200,7 @@ public class FlightSearchService {
                 origin, destination, request.getDepartureDate());
     }
 
-    private boolean hasSufficientSeats(com.aerobook.enitity.Flight flight,
+    private boolean hasSufficientSeats(com.aerobook.entity.Flight flight,
                                        com.aerobook.domain.enums.CabinClass cabinClass,
                                        int passengerCount) {
         if (flight.getFares() == null || flight.getFares().isEmpty()) return false;

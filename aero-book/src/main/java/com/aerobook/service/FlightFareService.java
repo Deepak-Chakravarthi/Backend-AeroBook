@@ -1,7 +1,7 @@
 package com.aerobook.service;
 
-import com.aerobook.enitity.Flight;
-import com.aerobook.enitity.FlightFare;
+import com.aerobook.entity.Flight;
+import com.aerobook.entity.FlightFare;
 import com.aerobook.domain.dto.request.FlightFareRequest;
 import com.aerobook.domain.dto.response.FlightFareResponse;
 import com.aerobook.exception.AeroBookException;

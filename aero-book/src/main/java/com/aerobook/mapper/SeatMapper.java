@@ -1,8 +1,8 @@
 package com.aerobook.mapper;
 
 
-import com.aerobook.enitity.Seat;
-import com.aerobook.enitity.SeatInventory;
+import com.aerobook.entity.Seat;
+import com.aerobook.entity.SeatInventory;
 import com.aerobook.domain.dto.response.SeatInventoryResponse;
 import com.aerobook.domain.dto.response.SeatResponse;
 import org.mapstruct.Mapper;

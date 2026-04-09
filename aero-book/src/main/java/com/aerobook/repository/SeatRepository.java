@@ -1,11 +1,10 @@
 package com.aerobook.repository;
 
 
-import com.aerobook.enitity.Seat;
+import com.aerobook.entity.Seat;
 import com.aerobook.domain.enums.SeatClass;
 import com.aerobook.domain.enums.SeatStatus;
 import jakarta.persistence.LockModeType;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.*;
 
 import java.time.LocalDateTime;

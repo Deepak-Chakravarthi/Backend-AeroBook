@@ -1,4 +1,4 @@
-package com.aerobook.enitity;
+package com.aerobook.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

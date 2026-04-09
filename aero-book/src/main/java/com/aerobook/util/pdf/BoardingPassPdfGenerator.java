@@ -1,7 +1,7 @@
 package com.aerobook.util.pdf;
 
 
-import com.aerobook.enitity.BoardingPass;
+import com.aerobook.entity.BoardingPass;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;

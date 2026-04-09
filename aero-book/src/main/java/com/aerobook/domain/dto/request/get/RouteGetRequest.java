@@ -2,7 +2,7 @@ package com.aerobook.domain.dto.request.get;
 
 
 import com.aerobook.domain.enums.RouteStatus;
-import com.aerobook.enitity.Route;
+import com.aerobook.entity.Route;
 import com.aerobook.util.Jpa.SpecificationBuilder;
 import lombok.Builder;
 import lombok.Getter;

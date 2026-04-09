@@ -1,6 +1,6 @@
 package com.aerobook.repository;
 
-import com.aerobook.enitity.BoardingPass;
+import com.aerobook.entity.BoardingPass;
 import com.aerobook.domain.enums.BoardingPassStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

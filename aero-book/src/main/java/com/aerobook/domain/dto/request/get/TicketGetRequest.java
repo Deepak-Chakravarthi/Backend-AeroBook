@@ -1,7 +1,7 @@
 package com.aerobook.domain.dto.request.get;
 
 
-import com.aerobook.enitity.Ticket;
+import com.aerobook.entity.Ticket;
 import com.aerobook.domain.enums.SeatClass;
 import com.aerobook.domain.enums.TicketStatus;
 import com.aerobook.util.Jpa.SpecificationBuilder;

@@ -1,8 +1,7 @@
 package com.aerobook.repository;
 
 
-import com.aerobook.enitity.Booking;
-import com.aerobook.domain.enums.BookingStatus;
+import com.aerobook.entity.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;

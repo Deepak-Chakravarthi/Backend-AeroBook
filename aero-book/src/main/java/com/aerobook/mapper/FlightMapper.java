@@ -1,8 +1,8 @@
 package com.aerobook.mapper;
 
-import com.aerobook.enitity.Flight;
-import com.aerobook.enitity.FlightFare;
-import com.aerobook.enitity.FlightSchedule;
+import com.aerobook.entity.Flight;
+import com.aerobook.entity.FlightFare;
+import com.aerobook.entity.FlightSchedule;
 import com.aerobook.domain.dto.request.FlightFareRequest;
 import com.aerobook.domain.dto.request.FlightRequest;
 import com.aerobook.domain.dto.request.FlightScheduleRequest;

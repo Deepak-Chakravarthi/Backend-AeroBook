@@ -1,8 +1,8 @@
 package com.aerobook.mapper;
 
 import com.aerobook.domain.dto.request.UserUpdateRequest;
-import com.aerobook.enitity.Role;
-import com.aerobook.enitity.User;
+import com.aerobook.entity.Role;
+import com.aerobook.entity.User;
 import com.aerobook.domain.dto.request.RegisterRequest;
 import com.aerobook.domain.dto.response.UserResponse;
 import com.aerobook.domain.enums.RoleType;

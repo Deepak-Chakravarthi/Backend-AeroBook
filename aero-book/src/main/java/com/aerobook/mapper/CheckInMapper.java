@@ -1,8 +1,8 @@
 package com.aerobook.mapper;
 
 
-import com.aerobook.enitity.BoardingPass;
-import com.aerobook.enitity.CheckIn;
+import com.aerobook.entity.BoardingPass;
+import com.aerobook.entity.CheckIn;
 import com.aerobook.domain.dto.response.BoardingPassResponse;
 import com.aerobook.domain.dto.response.CheckInResponse;
 import org.mapstruct.Mapper;

@@ -1,7 +1,7 @@
 package com.aerobook.repository;
 
 
-import com.aerobook.enitity.SeatInventory;
+import com.aerobook.entity.SeatInventory;
 import com.aerobook.domain.enums.SeatClass;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;

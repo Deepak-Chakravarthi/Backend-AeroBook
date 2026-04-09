@@ -1,7 +1,7 @@
 package com.aerobook.mapper;
 
-import com.aerobook.enitity.Passenger;
-import com.aerobook.enitity.Ticket;
+import com.aerobook.entity.Passenger;
+import com.aerobook.entity.Ticket;
 import com.aerobook.domain.dto.request.PassengerRequest;
 import com.aerobook.domain.dto.response.PassengerResponse;
 import com.aerobook.domain.dto.response.TicketResponse;

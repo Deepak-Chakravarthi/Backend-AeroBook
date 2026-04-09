@@ -1,7 +1,7 @@
 package com.aerobook.service;
 
-import com.aerobook.enitity.Role;
-import com.aerobook.enitity.User;
+import com.aerobook.entity.Role;
+import com.aerobook.entity.User;
 import com.aerobook.domain.dto.request.RoleAssignRequest;
 import com.aerobook.domain.dto.request.get.UserGetRequest;
 import com.aerobook.domain.dto.request.UserStatusRequest;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

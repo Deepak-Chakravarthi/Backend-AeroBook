@@ -1,4 +1,4 @@
-package com.aerobook.enitity;
+package com.aerobook.entity;
 
 import com.aerobook.domain.enums.AirlineStatus;
 import jakarta.persistence.*;

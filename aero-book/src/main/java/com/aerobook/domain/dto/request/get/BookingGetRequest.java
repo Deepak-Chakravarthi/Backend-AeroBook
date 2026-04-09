@@ -1,7 +1,7 @@
 package com.aerobook.domain.dto.request.get;
 
 
-import com.aerobook.enitity.Booking;
+import com.aerobook.entity.Booking;
 import com.aerobook.domain.enums.BookingStatus;
 import com.aerobook.domain.enums.BookingType;
 import com.aerobook.util.Jpa.SpecificationBuilder;
