@@ -1,6 +1,7 @@
 package com.aerobook.repository;
 
 
+import com.aerobook.domain.enums.BookingStatus;
 import com.aerobook.entity.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -53,4 +54,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long>,
             "AND b.status NOT IN ('CANCELLED', 'EXPIRED') " +
             "ORDER BY b.createdAt DESC")
     List<Booking> findActiveBookingsByUser(Long userId);
+
+    Iterable<Object> findAllByOutboundFlightIdAndStatus(Long id, BookingStatus bookingStatus);
 }
