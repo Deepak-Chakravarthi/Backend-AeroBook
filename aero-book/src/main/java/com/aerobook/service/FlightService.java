@@ -5,17 +5,23 @@ import com.aerobook.domain.dto.request.FlightRequest;
 import com.aerobook.domain.dto.request.FlightStatusUpdateRequest;
 import com.aerobook.domain.dto.request.get.FlightGetRequest;
 import com.aerobook.domain.dto.response.FlightResponse;
+import com.aerobook.domain.enums.BookingStatus;
+import com.aerobook.domain.enums.FlightStatus;
 import com.aerobook.entity.Aircraft;
 import com.aerobook.entity.Airline;
 import com.aerobook.entity.Flight;
 import com.aerobook.entity.Route;
+import com.aerobook.event.FlightCompletedEvent;
 import com.aerobook.exception.AeroBookException;
 import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.FlightMapper;
+import com.aerobook.repository.BookingRepository;
 import com.aerobook.repository.FlightRepository;
 import com.aerobook.service.query.AircraftQueryService;
 import com.aerobook.service.query.AirlineQueryService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -29,6 +35,7 @@ import java.util.List;
  * The type Flight service.
  */
 @Service
+@Slf4j
 public class FlightService {
 
     private final FlightRepository flightRepository;
@@ -36,12 +43,17 @@ public class FlightService {
     private final AirlineQueryService airlineQueryService;
     private final AircraftQueryService aircraftQueryService;
     private final RouteService routeService;
+    private final ApplicationEventPublisher eventPublisher;
     @Lazy
     private final SeatInventoryService seatInventoryService;
     @Lazy
     private final SeatService seatService;
     @Lazy
     private final FlightSearchCacheService flightSearchCacheService;
+
+    private final BookingRepository bookingRepository;
+
+    private final LoyaltyService loyaltyService;
 
     public FlightService(
             FlightRepository flightRepository,
@@ -51,7 +63,8 @@ public class FlightService {
             RouteService routeService,
             @Lazy SeatInventoryService seatInventoryService,
             @Lazy SeatService seatService,
-            @Lazy FlightSearchCacheService flightSearchCacheService) {
+            @Lazy FlightSearchCacheService flightSearchCacheService,
+            ApplicationEventPublisher applicationEventPublisher, ApplicationEventPublisher eventPublisher, BookingRepository bookingRepository, LoyaltyService loyaltyService) {
         this.flightRepository      = flightRepository;
         this.flightMapper          = flightMapper;
         this.airlineQueryService        = airlineQueryService;
@@ -60,6 +73,9 @@ public class FlightService {
         this.seatInventoryService  = seatInventoryService;
         this.seatService           = seatService;
         this.flightSearchCacheService = flightSearchCacheService;
+        this.eventPublisher = eventPublisher;
+        this.bookingRepository = bookingRepository;
+        this.loyaltyService = loyaltyService;
     }
 
     /**
@@ -172,11 +188,16 @@ public class FlightService {
         flight.setStatus(request.status());
         flight.setDelayMinutes(request.delayMinutes());
 
-        FlightResponse response = flightMapper.toResponse(flightRepository.save(flight));
 
-        evictSearchCache(flight);
+        Flight saved = flightRepository.save(flight);
 
-        return response;
+        // When flight lands — award miles to all passengers
+        if (request.status() == FlightStatus.LANDED) {
+            eventPublisher.publishEvent(new FlightCompletedEvent(this, saved));
+        }
+
+        evictSearchCache(saved);
+        return flightMapper.toResponse(saved);
     }
 
     /**
@@ -241,6 +262,26 @@ public class FlightService {
         // Evict all search cache entries for this route
         flightSearchCacheService.evictByPattern(
                 "search:*:" + origin + ":" + destination + ":*");
+    }
+
+    // In FlightService — called by listener
+    @Transactional
+    public void awardMilesForCompletedFlight(Flight flight) {
+        // Find all CONFIRMED bookings on this flight
+        bookingRepository.findAllByOutboundFlightIdAndStatus(
+                        flight.getId(), BookingStatus.CONFIRMED)
+                .forEach(booking -> {
+                    try {
+                        loyaltyService.awardMilesForFlight(
+                                booking.getUser().getId(),
+                                flight,
+                                booking.getOutboundSeatClass()
+                        );
+                    } catch (Exception e) {
+                        log.error("Failed to award miles — booking: {}, error: {}",
+                                booking.getPnr(), e.getMessage());
+                    }
+                });
     }
 
 }

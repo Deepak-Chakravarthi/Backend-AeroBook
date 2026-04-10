@@ -14,4 +14,5 @@ public class FlightCompletedEvent extends ApplicationEvent {
         super(source);
         this.flight = flight;
     }
+
 }

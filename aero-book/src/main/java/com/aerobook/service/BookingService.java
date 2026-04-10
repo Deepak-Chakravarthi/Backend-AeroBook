@@ -9,6 +9,7 @@ import com.aerobook.domain.enums.*;
 import com.aerobook.entity.Booking;
 import com.aerobook.entity.Flight;
 import com.aerobook.entity.User;
+import com.aerobook.event.BookingConfirmedEvent;
 import com.aerobook.exception.AeroBookException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.BookingMapper;
@@ -17,6 +18,7 @@ import com.aerobook.security.UserPrincipal;
 import com.aerobook.util.PNRGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,6 +42,8 @@ public class BookingService {
     private final UserService       userService;
     private final SeatService       seatService;
     private final SeatInventoryService seatInventoryService;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     // ----------------------------------------------------------------
     // Get bookings — admin sees all, passenger sees own only
@@ -240,6 +244,8 @@ public class BookingService {
         );
 
         Booking saved = bookingRepository.save(booking);
+        // Publish event — Loyalty listener picks this up
+        eventPublisher.publishEvent(new BookingConfirmedEvent(this, saved));
         log.info("Booking confirmed — PNR: {}", booking.getPnr());
         return bookingMapper.toResponse(saved);
     }
