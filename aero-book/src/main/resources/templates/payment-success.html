@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Payment Successful — AeroBook</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f3f4f6; }
+        .container { max-width: 600px; margin: 30px auto; background: white; border-radius: 8px; overflow: hidden; }
+        .header { background: #065f46; color: white; padding: 24px; text-align: center; }
+        .body { padding: 24px; }
+        .amount-box { background: #ecfdf5; border: 2px solid #065f46; border-radius: 8px; padding: 16px; text-align: center; margin: 20px 0; }
+        .amount { font-size: 32px; font-weight: bold; color: #065f46; }
+        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+        .footer { background: #f9fafb; padding: 16px; text-align: center; font-size: 12px; color: #9ca3af; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>✅ Payment Successful</h1>
+    </div>
+    <div class="body">
+        <div class="amount-box">
+            <p style="margin:0;color:#6b7280;font-size:13px;">AMOUNT PAID</p>
+            <p class="amount" th:text="'₹' + ${amount}"></p>
+        </div>
+        <div class="detail-row">
+            <span style="color:#6b7280;">Booking Reference</span>
+            <strong th:text="${pnr}"></strong>
+        </div>
+        <div class="detail-row">
+            <span style="color:#6b7280;">Payment Reference</span>
+            <strong th:text="${paymentReference}"></strong>
+        </div>
+        <div class="detail-row">
+            <span style="color:#6b7280;">Payment Method</span>
+            <strong th:text="${paymentMethod}"></strong>
+        </div>
+        <div class="detail-row">
+            <span style="color:#6b7280;">Transaction ID</span>
+            <strong th:text="${transactionId}"></strong>
+        </div>
+    </div>
+    <div class="footer">AeroBook — Your Journey, Our Priority</div>
+</div>
+</body>
+</html>

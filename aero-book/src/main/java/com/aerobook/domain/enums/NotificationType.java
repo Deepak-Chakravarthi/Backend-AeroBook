@@ -1,0 +1,19 @@
+package com.aerobook.domain.enums;
+
+
+public enum NotificationType {
+    BOOKING_CONFIRMED,
+    BOOKING_CANCELLED,
+    PAYMENT_SUCCESS,
+    PAYMENT_FAILED,
+    REFUND_INITIATED,
+    REFUND_SUCCESS,
+    CHECK_IN_OPEN,
+    CHECK_IN_CONFIRMED,
+    BOARDING_PASS_ISSUED,
+    FLIGHT_DELAYED,
+    FLIGHT_CANCELLED,
+    TIER_UPGRADED,
+    MILES_EARNED,
+    WELCOME
+}

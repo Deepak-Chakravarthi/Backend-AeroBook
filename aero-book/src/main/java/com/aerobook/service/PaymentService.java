@@ -10,6 +10,7 @@ import com.aerobook.entity.Booking;
 import com.aerobook.entity.Payment;
 import com.aerobook.entity.Refund;
 import com.aerobook.entity.User;
+import com.aerobook.event.PaymentSuccessEvent;
 import com.aerobook.exception.AeroBookException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.PaymentMapper;
@@ -19,6 +20,7 @@ import com.aerobook.security.UserPrincipal;
 import com.aerobook.util.PaymentReferenceGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,6 +46,7 @@ public class PaymentService {
     private final BookingService             bookingService;
     private final UserService                userService;
     private final TicketService              ticketService;
+    private final ApplicationEventPublisher eventPublisher;
 
     // ----------------------------------------------------------------
     // Get payments — filterable
@@ -166,7 +169,12 @@ public class PaymentService {
                     gatewayResponse.transactionId(),
                     gatewayResponse.responseCode()
             );
+
             paymentRepository.save(payment);
+
+            eventPublisher.publishEvent(
+                    new PaymentSuccessEvent(this,
+                            paymentRepository.findByIdWithDetails(paymentId).orElseThrow()));
 
             // Confirm booking
             bookingService.confirmBooking(payment.getBooking().getId());
