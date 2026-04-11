@@ -3,6 +3,7 @@ package com.aerobook.repository;
 
 import com.aerobook.domain.enums.BookingStatus;
 import com.aerobook.entity.Booking;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -55,5 +56,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long>,
             "ORDER BY b.createdAt DESC")
     List<Booking> findActiveBookingsByUser(Long userId);
 
-    Iterable<Object> findAllByOutboundFlightIdAndStatus(Long id, BookingStatus bookingStatus);
-}
+    @Query("SELECT b FROM Booking b " +
+            "JOIN FETCH b.user " +
+            "WHERE b.outboundFlight.id = :flightId " +
+            "AND b.status = :status")
+    List<Booking> findAllByOutboundFlightIdAndStatus(
+            @Param("flightId") Long flightId,
+            @Param("status") BookingStatus status);}
