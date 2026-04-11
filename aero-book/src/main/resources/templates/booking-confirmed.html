@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Booking Confirmed — AeroBook</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f3f4f6; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 30px auto; background: white; border-radius: 8px; overflow: hidden; }
+        .header { background: #1e40af; color: white; padding: 24px; text-align: center; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .body { padding: 24px; }
+        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+        .label { color: #6b7280; font-size: 13px; }
+        .value { font-weight: bold; font-size: 13px; }
+        .pnr-box { background: #eff6ff; border: 2px solid #1e40af; border-radius: 8px; padding: 16px; text-align: center; margin: 20px 0; }
+        .pnr { font-size: 28px; font-weight: bold; color: #1e40af; letter-spacing: 4px; }
+        .footer { background: #f9fafb; padding: 16px; text-align: center; font-size: 12px; color: #9ca3af; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>✈ Booking Confirmed</h1>
+        <p th:text="'Your booking is confirmed, ' + ${passengerName} + '!'"></p>
+    </div>
+    <div class="body">
+        <div class="pnr-box">
+            <p style="margin:0;color:#6b7280;font-size:13px;">YOUR BOOKING REFERENCE</p>
+            <p class="pnr" th:text="${pnr}"></p>
+        </div>
+        <div class="detail-row">
+            <span class="label">FLIGHT</span>
+            <span class="value" th:text="${flightNumber}"></span>
+        </div>
+        <div class="detail-row">
+            <span class="label">FROM</span>
+            <span class="value" th:text="${originCity} + ' (' + ${originCode} + ')'"></span>
+        </div>
+        <div class="detail-row">
+            <span class="label">TO</span>
+            <span class="value" th:text="${destinationCity} + ' (' + ${destinationCode} + ')'"></span>
+        </div>
+        <div class="detail-row">
+            <span class="label">DEPARTURE</span>
+            <span class="value" th:text="${departureTime}"></span>
+        </div>
+        <div class="detail-row">
+            <span class="label">SEAT CLASS</span>
+            <span class="value" th:text="${seatClass}"></span>
+        </div>
+        <div class="detail-row">
+            <span class="label">TOTAL FARE</span>
+            <span class="value" th:text="'₹' + ${totalFare}"></span>
+        </div>
+        <p style="margin-top:20px;color:#6b7280;font-size:13px;">
+            Web check-in opens 24 hours before departure. Please carry a valid photo ID.
+        </p>
+    </div>
+    <div class="footer">
+        <p>AeroBook — Your Journey, Our Priority</p>
+        <p>This is an automated email. Please do not reply.</p>
+    </div>
+</div>
+</body>
+</html>

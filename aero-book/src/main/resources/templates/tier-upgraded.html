@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Tier Upgrade — AeroBook</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f3f4f6; }
+        .container { max-width: 600px; margin: 30px auto; background: white; border-radius: 8px; overflow: hidden; }
+        .header { background: #1e40af; color: white; padding: 24px; text-align: center; }
+        .body { padding: 24px; text-align: center; }
+        .tier-box { background: #eff6ff; border: 2px solid #1e40af; border-radius: 8px; padding: 24px; margin: 20px 0; }
+        .tier { font-size: 36px; font-weight: bold; color: #1e40af; }
+        .footer { background: #f9fafb; padding: 16px; text-align: center; font-size: 12px; color: #9ca3af; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🏆 Congratulations!</h1>
+        <p th:text="'Welcome to ' + ${newTier} + ' tier, ' + ${passengerName} + '!'"></p>
+    </div>
+    <div class="body">
+        <div class="tier-box">
+            <p style="margin:0;color:#6b7280;font-size:13px;">YOUR NEW TIER</p>
+            <p class="tier" th:text="${newTier}"></p>
+            <p style="color:#6b7280;font-size:13px;" th:text="'Bonus miles awarded: ' + ${bonusMiles}"></p>
+        </div>
+        <p th:text="'You have earned ' + ${totalMiles} + ' qualifying miles so far.'"></p>
+        <p style="color:#6b7280;font-size:13px;">
+            Enjoy exclusive benefits including bonus miles, priority check-in, and more!
+        </p>
+    </div>
+    <div class="footer">AeroBook — Your Journey, Our Priority</div>
+</div>
+</body>
+</html>

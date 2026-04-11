@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Flight Delay Notice — AeroBook</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f3f4f6; }
+        .container { max-width: 600px; margin: 30px auto; background: white; border-radius: 8px; overflow: hidden; }
+        .header { background: #92400e; color: white; padding: 24px; text-align: center; }
+        .body { padding: 24px; }
+        .delay-box { background: #fffbeb; border: 2px solid #92400e; border-radius: 8px; padding: 16px; text-align: center; margin: 20px 0; }
+        .delay { font-size: 28px; font-weight: bold; color: #92400e; }
+        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+        .footer { background: #f9fafb; padding: 16px; text-align: center; font-size: 12px; color: #9ca3af; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>⚠ Flight Delay Notice</h1>
+        <p th:text="'Flight ' + ${flightNumber} + ' is delayed'"></p>
+    </div>
+    <div class="body">
+        <div class="delay-box">
+            <p style="margin:0;color:#6b7280;font-size:13px;">DELAY</p>
+            <p class="delay" th:text="${delayMinutes} + ' minutes'"></p>
+        </div>
+        <div class="detail-row">
+            <span style="color:#6b7280;">Your Booking</span>
+            <strong th:text="${pnr}"></strong>
+        </div>
+        <div class="detail-row">
+            <span style="color:#6b7280;">Flight</span>
+            <strong th:text="${flightNumber}"></strong>
+        </div>
+        <div class="detail-row">
+            <span style="color:#6b7280;">Original Departure</span>
+            <strong th:text="${originalDeparture}"></strong>
+        </div>
+        <div class="detail-row">
+            <span style="color:#6b7280;">New Departure</span>
+            <strong th:text="${newDeparture}"></strong>
+        </div>
+        <p style="margin-top:20px;color:#6b7280;font-size:13px;" th:text="${reason}"></p>
+        <p style="color:#6b7280;font-size:13px;">
+            We apologise for the inconvenience. Please check in at least 60 minutes before the new departure time.
+        </p>
+    </div>
+    <div class="footer">AeroBook — Your Journey, Our Priority</div>
+</div>
+</body>
+</html>

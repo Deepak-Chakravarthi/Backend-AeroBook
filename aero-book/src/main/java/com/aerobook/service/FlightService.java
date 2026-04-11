@@ -7,11 +7,9 @@ import com.aerobook.domain.dto.request.get.FlightGetRequest;
 import com.aerobook.domain.dto.response.FlightResponse;
 import com.aerobook.domain.enums.BookingStatus;
 import com.aerobook.domain.enums.FlightStatus;
-import com.aerobook.entity.Aircraft;
-import com.aerobook.entity.Airline;
-import com.aerobook.entity.Flight;
-import com.aerobook.entity.Route;
+import com.aerobook.entity.*;
 import com.aerobook.event.FlightCompletedEvent;
+import com.aerobook.event.FlightStatusChangedEvent;
 import com.aerobook.exception.AeroBookException;
 import com.aerobook.exception.DuplicateResourceException;
 import com.aerobook.exception.ResourceNotFoundException;
@@ -175,6 +173,7 @@ public class FlightService {
     @Transactional
     public FlightResponse updateFlightStatus(Long id, FlightStatusUpdateRequest request) {
         Flight flight = findFlightById(id);
+        FlightStatus previous = flight.getStatus();
 
         if (request.status() == com.aerobook.domain.enums.FlightStatus.DELAYED
                 && (request.delayMinutes() == null || request.delayMinutes() <= 0)) {
@@ -190,6 +189,16 @@ public class FlightService {
 
 
         Flight saved = flightRepository.save(flight);
+
+        // Fetch affected bookings for notification fan-out
+        List<Booking> affectedBookings = bookingRepository
+                .findAllByOutboundFlightIdAndStatus(
+                        flight.getId(), BookingStatus.CONFIRMED);
+
+        // Publish flight status changed event
+        eventPublisher.publishEvent(new FlightStatusChangedEvent(
+                this, saved, previous, request.status(),
+                request.reason(), affectedBookings));
 
         // When flight lands — award miles to all passengers
         if (request.status() == FlightStatus.LANDED) {
