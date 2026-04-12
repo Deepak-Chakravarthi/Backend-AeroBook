@@ -13,19 +13,20 @@
 
 
 ### Module 3 — Airline & Aircraft (Reference Data)
-* Airline & aircraft reference data model (seat configurations, enums, validations, Flyway-seeded realistic data)
-* High-performance in-memory caching (AircraftCacheStore with O(1) lookups, sync with DB writes, reduces query load)
+* Airline & aircraft reference data model (seat configurations, enums, validations)
+* High-performance in-memory caching with caffeine
 * Flexible search & optimized queries (JpaSpecification filters, JOIN FETCH for seat configs, lightweight response mapping)
 
 
 ### Module 4 — Airport & Route (Reference Data)
-* Airport & route domain modeling (IATA-based relationships, route validation, unique constraints, Flyway-seeded network data)
+* Airport & route domain modeling (IATA-based relationships, route validation, unique constraints)
 * Advanced querying with cross-entity filtering (JpaSpecification, JOIN on airports, JPQL for route lookups)
+* High-performance in-memory caching with caffeine
 * Optimized data fetching & mapping (JOIN FETCH for origin/destination, embedded responses, reusable service helpers)
 
 
 ### Module 5 — Flight & Schedule
-* Flight domain with schedules & fares (recurring schedules, seat-class pricing, validations, Flyway-seeded data)
+* Flight domain with schedules & fares (recurring schedules, seat-class pricing, validations)
 * Automated flight generation (schedule-based creation, duplicate prevention, day mapping, bulk generation APIs)
 * Optimized search & lifecycle handling (JOIN FETCH queries, status events, Redis cache eviction, dependency-safe design)
 
