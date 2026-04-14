@@ -11,6 +11,8 @@ spring:
     show-sql: false
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
+  cache:
+    type: redis
   data:
     redis:
       host: localhost
@@ -64,4 +66,12 @@ aerobook:
   notification:
     from-email: noreply@aerobook.com
     from-name: AeroBook
-    kafka-enabled: false     # flip to true in Phase 2
+    kafka-enabled: false
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0     # trace 100% in dev, lower in prod
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
