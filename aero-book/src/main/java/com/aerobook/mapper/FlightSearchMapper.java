@@ -11,9 +11,20 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * The type Flight search mapper.
+ */
 @Component
 public class FlightSearchMapper {
 
+    /**
+     * To search result flight search result item.
+     *
+     * @param flight         the flight
+     * @param cabinClass     the cabin class
+     * @param passengerCount the passenger count
+     * @return the flight search result item
+     */
     public FlightSearchResultItem toSearchResult(Flight flight,
                                                  CabinClass cabinClass,
                                                  int passengerCount) {

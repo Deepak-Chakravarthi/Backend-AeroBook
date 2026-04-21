@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The type Check in controller.
+ */
 @RestController
 @RequestMapping("/check-in")
 @RequiredArgsConstructor
@@ -27,7 +30,18 @@ public class CheckInController {
     private final CheckInService     checkInService;
     private final BoardingPassService boardingPassService;
 
-    // ── Get check-ins — admin ─────────────────────────────────────────
+    /**
+     * Gets check ins.
+     *
+     * @param id          the id
+     * @param ticketId    the ticket id
+     * @param bookingId   the booking id
+     * @param passengerId the passenger id
+     * @param flightId    the flight id
+     * @param status      the status
+     * @param pageable    the pageable
+     * @return the check ins
+     */
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'AGENT', 'AIRLINE_ADMIN')")
     public ResponseEntity<List<CheckInResponse>> getCheckIns(
@@ -47,14 +61,25 @@ public class CheckInController {
         return ResponseEntity.ok(checkInService.getCheckIns(request, pageable));
     }
 
-    // ── Get by id ─────────────────────────────────────────────────────
+    /**
+     * Gets check in by id.
+     *
+     * @param id the id
+     * @return the check in by id
+     */
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CheckInResponse> getCheckInById(@PathVariable Long id) {
         return ResponseEntity.ok(checkInService.getCheckInById(id));
     }
 
-    // ── Get by ticket ─────────────────────────────────────────────────
+    /**
+     * Gets check in by ticket.
+     *
+     * @param ticketId the ticket id
+     * @return the check in by ticket
+     */
+
     @GetMapping("/ticket/{ticketId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CheckInResponse> getCheckInByTicket(
@@ -62,7 +87,12 @@ public class CheckInController {
         return ResponseEntity.ok(checkInService.getCheckInByTicket(ticketId));
     }
 
-    // ── Perform check-in ──────────────────────────────────────────────
+    /**
+     * Check in response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping
     @PreAuthorize("hasAnyRole('PASSENGER', 'AGENT', 'SUPER_ADMIN')")
     public ResponseEntity<CheckInResponse> checkIn(
@@ -71,7 +101,12 @@ public class CheckInController {
                 .body(checkInService.checkIn(request));
     }
 
-    // ── Issue boarding pass ───────────────────────────────────────────
+    /**
+     * Issue boarding pass response entity.
+     *
+     * @param checkInId the check in id
+     * @return the response entity
+     */
     @PostMapping("/{checkInId}/boarding-pass")
     @PreAuthorize("hasAnyRole('PASSENGER', 'AGENT', 'SUPER_ADMIN')")
     public ResponseEntity<BoardingPassResponse> issueBoardingPass(
@@ -80,7 +115,13 @@ public class CheckInController {
                 .body(boardingPassService.issueBoardingPass(checkInId));
     }
 
-    // ── Get boarding pass by check-in ─────────────────────────────────
+    /**
+     * Gets boarding pass.
+     *
+     * @param checkInId the check in id
+     * @return the boarding pass
+     */
+
     @GetMapping("/{checkInId}/boarding-pass")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<BoardingPassResponse> getBoardingPass(

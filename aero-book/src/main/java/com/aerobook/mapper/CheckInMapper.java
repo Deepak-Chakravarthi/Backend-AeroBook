@@ -8,9 +8,18 @@ import com.aerobook.domain.dto.response.CheckInResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * The interface Check in mapper.
+ */
 @Mapper(componentModel = "spring")
 public interface CheckInMapper {
 
+    /**
+     * To response check in response.
+     *
+     * @param checkIn the check in
+     * @return the check in response
+     */
     @Mapping(target = "ticketId",      source = "ticket.id")
     @Mapping(target = "ticketNumber",  source = "ticket.ticketNumber")
     @Mapping(target = "bookingId",     source = "booking.id")
@@ -25,6 +34,12 @@ public interface CheckInMapper {
     @Mapping(target = "departureTime", source = "flight.departureTime")
     CheckInResponse toResponse(CheckIn checkIn);
 
+    /**
+     * To boarding pass response boarding pass response.
+     *
+     * @param boardingPass the boarding pass
+     * @return the boarding pass response
+     */
     @Mapping(target = "checkInId",     source = "checkIn.id")
     @Mapping(target = "ticketId",      source = "ticket.id")
     @Mapping(target = "passengerId",   source = "passenger.id")

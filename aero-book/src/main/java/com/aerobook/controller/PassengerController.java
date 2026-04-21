@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The type Passenger controller.
+ */
 @RestController
 @RequestMapping("/passengers")
 @RequiredArgsConstructor
@@ -22,7 +25,19 @@ public class PassengerController {
 
     private final PassengerService passengerService;
 
-    // ── Admin — view all passengers ───────────────────────────────────
+
+    /**
+     * Gets passengers.
+     *
+     * @param bookingId      the booking id
+     * @param userId         the user id
+     * @param firstName      the first name
+     * @param lastName       the last name
+     * @param passengerType  the passenger type
+     * @param passportNumber the passport number
+     * @param pageable       the pageable
+     * @return the passengers
+     */
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'AGENT', 'AIRLINE_ADMIN')")
     public ResponseEntity<List<PassengerResponse>> getPassengers(
@@ -44,14 +59,24 @@ public class PassengerController {
         return ResponseEntity.ok(passengerService.getPassengers(request, pageable));
     }
 
-    // ── Get by id ─────────────────────────────────────────────────────
+    /**
+     * Gets passenger by id.
+     *
+     * @param id the id
+     * @return the passenger by id
+     */
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PassengerResponse> getPassengerById(@PathVariable Long id) {
         return ResponseEntity.ok(passengerService.getPassengerById(id));
     }
 
-    // ── Get by booking ────────────────────────────────────────────────
+    /**
+     * Gets passengers by booking.
+     *
+     * @param bookingId the booking id
+     * @return the passengers by booking
+     */
     @GetMapping("/booking/{bookingId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<PassengerResponse>> getPassengersByBooking(
@@ -60,7 +85,13 @@ public class PassengerController {
                 passengerService.getPassengersByBooking(bookingId));
     }
 
-    // ── Add passenger to booking ──────────────────────────────────────
+    /**
+     * Add passenger response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
+
     @PostMapping
     @PreAuthorize("hasAnyRole('PASSENGER', 'AGENT', 'SUPER_ADMIN')")
     public ResponseEntity<PassengerResponse> addPassenger(
@@ -69,7 +100,14 @@ public class PassengerController {
                 .body(passengerService.addPassenger(request));
     }
 
-    // ── Update passenger ──────────────────────────────────────────────
+    /**
+     * Update passenger response entity.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the response entity
+     */
+
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('PASSENGER', 'AGENT', 'SUPER_ADMIN')")
     public ResponseEntity<PassengerResponse> updatePassenger(
@@ -78,7 +116,12 @@ public class PassengerController {
         return ResponseEntity.ok(passengerService.updatePassenger(id, request));
     }
 
-    // ── Delete passenger ──────────────────────────────────────────────
+    /**
+     * Delete passenger response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('AGENT', 'SUPER_ADMIN')")
     public ResponseEntity<Void> deletePassenger(@PathVariable Long id) {

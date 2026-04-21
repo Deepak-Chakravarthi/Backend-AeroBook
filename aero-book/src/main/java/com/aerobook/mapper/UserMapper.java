@@ -11,9 +11,18 @@ import org.mapstruct.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * The interface User mapper.
+ */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
+    /**
+     * To entity user.
+     *
+     * @param request the request
+     * @return the user
+     */
     @Mapping(target = "id",        ignore = true)
     @Mapping(target = "password",  ignore = true)   // encoded separately
     @Mapping(target = "status",    ignore = true)   // set in service
@@ -22,6 +31,12 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     User toEntity(RegisterRequest request);
 
+    /**
+     * Update entity.
+     *
+     * @param request the request
+     * @param user    the user
+     */
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id",        ignore = true)
     @Mapping(target = "username",  ignore = true)   // username not updatable
@@ -33,9 +48,21 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     void updateEntity(UserUpdateRequest request, @MappingTarget User user);
 
+    /**
+     * To response user response.
+     *
+     * @param user the user
+     * @return the user response
+     */
     @Mapping(target = "roles", expression = "java(mapRoles(user.getRoles()))")
     UserResponse toResponse(User user);
 
+    /**
+     * Map roles set.
+     *
+     * @param roles the roles
+     * @return the set
+     */
     default Set<RoleType> mapRoles(Set<Role> roles) {
         return roles.stream()
                 .map(Role::getName)

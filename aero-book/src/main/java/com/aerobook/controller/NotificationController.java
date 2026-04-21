@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The type Notification controller.
+ */
 @RestController
 @RequestMapping("/notifications")
 @RequiredArgsConstructor
@@ -20,7 +23,13 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    // ── Own notifications ─────────────────────────────────────────────
+    /**
+     * Gets my notifications.
+     *
+     * @param principal the principal
+     * @param pageable  the pageable
+     * @return the my notifications
+     */
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<NotificationResponse>> getMyNotifications(
@@ -30,7 +39,14 @@ public class NotificationController {
                 .getNotificationsByUser(principal.getId(), pageable));
     }
 
-    // ── Admin — get by user ───────────────────────────────────────────
+    /**
+     * Gets notifications by user.
+     *
+     * @param userId   the user id
+     * @param pageable the pageable
+     * @return the notifications by user
+     */
+
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<NotificationResponse>> getNotificationsByUser(

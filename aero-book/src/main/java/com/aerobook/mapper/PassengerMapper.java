@@ -8,9 +8,18 @@ import com.aerobook.domain.dto.response.TicketResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * The interface Passenger mapper.
+ */
 @Mapper(componentModel = "spring")
 public interface PassengerMapper {
 
+    /**
+     * To entity passenger.
+     *
+     * @param request the request
+     * @return the passenger
+     */
     @Mapping(target = "id",        ignore = true)
     @Mapping(target = "booking",   ignore = true)
     @Mapping(target = "user",      ignore = true)
@@ -18,11 +27,23 @@ public interface PassengerMapper {
     @Mapping(target = "createdAt", ignore = true)
     Passenger toEntity(PassengerRequest request);
 
+    /**
+     * To response passenger response.
+     *
+     * @param passenger the passenger
+     * @return the passenger response
+     */
     @Mapping(target = "bookingId", source = "booking.id")
     @Mapping(target = "pnr",       source = "booking.pnr")
     @Mapping(target = "userId",    source = "user.id")
     PassengerResponse toResponse(Passenger passenger);
 
+    /**
+     * To ticket response ticket response.
+     *
+     * @param ticket the ticket
+     * @return the ticket response
+     */
     @Mapping(target = "bookingId",     source = "booking.id")
     @Mapping(target = "pnr",           source = "booking.pnr")
     @Mapping(target = "passengerId",   source = "passenger.id")

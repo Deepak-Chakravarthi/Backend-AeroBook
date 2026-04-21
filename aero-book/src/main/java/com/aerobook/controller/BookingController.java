@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The type Booking controller.
+ */
 @RestController
 @RequestMapping("/bookings")
 @RequiredArgsConstructor
@@ -24,7 +27,17 @@ public class BookingController {
 
     private final BookingService bookingService;
 
-    // ── Admin — view all bookings ─────────────────────────────────────
+    /**
+     * Gets bookings.
+     *
+     * @param id          the id
+     * @param pnr         the pnr
+     * @param userId      the user id
+     * @param status      the status
+     * @param bookingType the booking type
+     * @param pageable    the pageable
+     * @return the bookings
+     */
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'AGENT', 'AIRLINE_ADMIN')")
     public ResponseEntity<List<BookingSummaryResponse>> getBookings(
@@ -43,28 +56,48 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getBookings(request, pageable));
     }
 
-    // ── Own bookings ──────────────────────────────────────────────────
+    /**
+     * Gets my bookings.
+     *
+     * @return the my bookings
+     */
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<BookingSummaryResponse>> getMyBookings() {
         return ResponseEntity.ok(bookingService.getMyBookings());
     }
 
-    // ── Get by id ─────────────────────────────────────────────────────
+    /**
+     * Gets booking by id.
+     *
+     * @param id the id
+     * @return the booking by id
+     */
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<BookingResponse> getBookingById(@PathVariable Long id) {
         return ResponseEntity.ok(bookingService.getBookingById(id));
     }
 
-    // ── Get by PNR ────────────────────────────────────────────────────
+    /**
+     * Gets booking by pnr.
+     *
+     * @param pnr the pnr
+     * @return the booking by pnr
+     */
     @GetMapping("/pnr/{pnr}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<BookingResponse> getBookingByPnr(@PathVariable String pnr) {
         return ResponseEntity.ok(bookingService.getBookingByPnr(pnr));
     }
 
-    // ── Step 1: Create booking ────────────────────────────────────────
+    /**
+     * Create booking response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
+
     @PostMapping
     @PreAuthorize("hasAnyRole('PASSENGER', 'AGENT', 'SUPER_ADMIN')")
     public ResponseEntity<BookingResponse> createBooking(
@@ -73,28 +106,50 @@ public class BookingController {
                 .body(bookingService.createBooking(request));
     }
 
-    // ── Step 2: Lock seats ────────────────────────────────────────────
+    /**
+     * Lock seats response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @PostMapping("/{id}/lock-seats")
     @PreAuthorize("hasAnyRole('PASSENGER', 'AGENT', 'SUPER_ADMIN')")
     public ResponseEntity<BookingResponse> lockSeats(@PathVariable Long id) {
         return ResponseEntity.ok(bookingService.lockSeats(id));
     }
 
-    // ── Step 3: Initiate payment ──────────────────────────────────────
+    /**
+     * Initiate payment response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @PostMapping("/{id}/initiate-payment")
     @PreAuthorize("hasAnyRole('PASSENGER', 'AGENT', 'SUPER_ADMIN')")
     public ResponseEntity<BookingResponse> initiatePayment(@PathVariable Long id) {
         return ResponseEntity.ok(bookingService.initiatePayment(id));
     }
 
-    // ── Step 4: Confirm — internal, called by PaymentService ─────────
+    /**
+     * Confirm booking response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @PostMapping("/{id}/confirm")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'AGENT')")
     public ResponseEntity<BookingResponse> confirmBooking(@PathVariable Long id) {
         return ResponseEntity.ok(bookingService.confirmBooking(id));
     }
 
-    // ── Cancel ────────────────────────────────────────────────────────
+    /**
+     * Cancel booking response entity.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the response entity
+     */
+
     @PostMapping("/{id}/cancel")
     @PreAuthorize("hasAnyRole('PASSENGER', 'AGENT', 'SUPER_ADMIN')")
     public ResponseEntity<BookingResponse> cancelBooking(

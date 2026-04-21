@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The type User controller.
+ */
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -23,6 +26,19 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * Gets users.
+     *
+     * @param id        the id
+     * @param username  the username
+     * @param email     the email
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @param status    the status
+     * @param role      the role
+     * @param pageable  the pageable
+     * @return the users
+     */
     @GetMapping
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<UserResponse>> getUsers(
@@ -44,18 +60,35 @@ public class UserController {
         return ResponseEntity.ok(userService.getUsers(request, pageable));
     }
 
+    /**
+     * Gets user by id.
+     *
+     * @param id the id
+     * @return the user by id
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
+    /**
+     * Gets my profile.
+     *
+     * @return the my profile
+     */
     @GetMapping("/me")
     @AuthenticatedEndpoint
     public ResponseEntity<UserResponse> getMyProfile() {
         return ResponseEntity.ok(userService.getMyProfile());
     }
 
+    /**
+     * Update my profile response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PutMapping("/me")
     @AuthenticatedEndpoint
     public ResponseEntity<UserResponse> updateMyProfile(
@@ -63,6 +96,13 @@ public class UserController {
         return ResponseEntity.ok(userService.updateMyProfile(request));
     }
 
+    /**
+     * Update user response entity.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the response entity
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<UserResponse> updateUser(
@@ -71,6 +111,13 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
+    /**
+     * Assign role response entity.
+     *
+     * @param userId  the user id
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping("/{userId}/roles")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<UserResponse> assignRole(
@@ -79,6 +126,13 @@ public class UserController {
         return ResponseEntity.ok(userService.assignRole(userId, request));
     }
 
+    /**
+     * Remove role response entity.
+     *
+     * @param userId  the user id
+     * @param request the request
+     * @return the response entity
+     */
     @DeleteMapping("/{userId}/roles")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<UserResponse> removeRole(
@@ -87,6 +141,13 @@ public class UserController {
         return ResponseEntity.ok(userService.removeRole(userId, request));
     }
 
+    /**
+     * Update status response entity.
+     *
+     * @param userId  the user id
+     * @param request the request
+     * @return the response entity
+     */
     @PatchMapping("/{userId}/status")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<UserResponse> updateStatus(
@@ -95,6 +156,12 @@ public class UserController {
         return ResponseEntity.ok(userService.updateStatus(userId, request));
     }
 
+    /**
+     * Delete user response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {

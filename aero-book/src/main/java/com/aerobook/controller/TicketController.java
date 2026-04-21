@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The type Ticket controller.
+ */
 @RestController
 @RequestMapping("/tickets")
 @RequiredArgsConstructor
@@ -19,7 +22,21 @@ public class TicketController {
 
     private final TicketService ticketService;
 
-    // ── Get tickets — filterable ──────────────────────────────────────
+    /**
+     * Gets tickets.
+     *
+     * @param id           the id
+     * @param ticketNumber the ticket number
+     * @param bookingId    the booking id
+     * @param passengerId  the passenger id
+     * @param flightId     the flight id
+     * @param seatClass    the seat class
+     * @param status       the status
+     * @param isReturnLeg  the is return leg
+     * @param pageable     the pageable
+     * @return the tickets
+     */
+
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'AGENT', 'AIRLINE_ADMIN')")
     public ResponseEntity<List<TicketResponse>> getTickets(
@@ -43,14 +60,26 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getTickets(request, pageable));
     }
 
-    // ── Get by id ─────────────────────────────────────────────────────
+    /**
+     * Gets ticket by id.
+     *
+     * @param id the id
+     * @return the ticket by id
+     */
+
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<TicketResponse> getTicketById(@PathVariable Long id) {
         return ResponseEntity.ok(ticketService.getTicketById(id));
     }
 
-    // ── Get by booking ────────────────────────────────────────────────
+    /**
+     * Gets tickets by booking.
+     *
+     * @param bookingId the booking id
+     * @return the tickets by booking
+     */
+
     @GetMapping("/booking/{bookingId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<TicketResponse>> getTicketsByBooking(
@@ -58,7 +87,13 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getTicketsByBooking(bookingId));
     }
 
-    // ── Issue tickets — on booking confirmation ───────────────────────
+    /**
+     * Issue tickets response entity.
+     *
+     * @param bookingId the booking id
+     * @return the response entity
+     */
+
     @PostMapping("/issue/{bookingId}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'AGENT')")
     public ResponseEntity<List<TicketResponse>> issueTickets(
@@ -66,7 +101,12 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.issueTickets(bookingId));
     }
 
-    // ── Cancel tickets ────────────────────────────────────────────────
+    /**
+     * Cancel tickets response entity.
+     *
+     * @param bookingId the booking id
+     * @return the response entity
+     */
     @PostMapping("/cancel/{bookingId}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'AGENT')")
     public ResponseEntity<Void> cancelTickets(@PathVariable Long bookingId) {

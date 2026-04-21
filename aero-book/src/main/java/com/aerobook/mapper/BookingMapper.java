@@ -7,9 +7,18 @@ import com.aerobook.domain.dto.response.BookingSummaryResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * The interface Booking mapper.
+ */
 @Mapper(componentModel = "spring")
 public interface BookingMapper {
 
+    /**
+     * To response booking response.
+     *
+     * @param booking the booking
+     * @return the booking response
+     */
     @Mapping(target = "userId",   source = "user.id")
     @Mapping(target = "username", source = "user.username")
 
@@ -29,6 +38,12 @@ public interface BookingMapper {
 
     BookingResponse toResponse(Booking booking);
 
+    /**
+     * To summary response booking summary response.
+     *
+     * @param booking the booking
+     * @return the booking summary response
+     */
     @Mapping(target = "outboundFlightNumber",    source = "outboundFlight.flightNumber")
     @Mapping(target = "outboundOriginCode",      source = "outboundFlight.route.origin.iataCode")
     @Mapping(target = "outboundDestinationCode", source = "outboundFlight.route.destination.iataCode")

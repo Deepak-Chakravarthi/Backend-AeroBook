@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The type Loyalty controller.
+ */
 @RestController
 @RequestMapping("/loyalty")
 @RequiredArgsConstructor
@@ -25,7 +28,12 @@ public class LoyaltyController {
 
     private final LoyaltyService loyaltyService;
 
-    // ── Own account ───────────────────────────────────────────────────
+    /**
+     * Gets my account.
+     *
+     * @param principal the principal
+     * @return the my account
+     */
     @GetMapping("/my-account")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<LoyaltyAccountResponse> getMyAccount(
@@ -34,7 +42,13 @@ public class LoyaltyController {
                 loyaltyService.getMyAccount(principal.getId()));
     }
 
-    // ── Own transactions ──────────────────────────────────────────────
+    /**
+     * Gets my transactions.
+     *
+     * @param principal the principal
+     * @param pageable  the pageable
+     * @return the my transactions
+     */
     @GetMapping("/my-transactions")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<MileTransactionResponse>> getMyTransactions(
@@ -44,7 +58,12 @@ public class LoyaltyController {
                 loyaltyService.getTransactions(principal.getId(), pageable));
     }
 
-    // ── Admin — get account by user id ───────────────────────────────
+    /**
+     * Gets account by user.
+     *
+     * @param userId the user id
+     * @return the account by user
+     */
     @GetMapping("/account/{userId}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<LoyaltyAccountResponse> getAccountByUser(
@@ -52,7 +71,13 @@ public class LoyaltyController {
         return ResponseEntity.ok(loyaltyService.getAccountByUser(userId));
     }
 
-    // ── Admin — get transactions by user ─────────────────────────────
+    /**
+     * Gets transactions.
+     *
+     * @param userId   the user id
+     * @param pageable the pageable
+     * @return the transactions
+     */
     @GetMapping("/transactions/{userId}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'AGENT')")
     public ResponseEntity<List<MileTransactionResponse>> getTransactions(
@@ -62,7 +87,12 @@ public class LoyaltyController {
                 loyaltyService.getTransactions(userId, pageable));
     }
 
-    // ── Create account manually ───────────────────────────────────────
+    /**
+     * Create account response entity.
+     *
+     * @param userId the user id
+     * @return the response entity
+     */
     @PostMapping("/account/{userId}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<LoyaltyAccountResponse> createAccount(
@@ -71,7 +101,13 @@ public class LoyaltyController {
                 .body(loyaltyService.createAccountForUser(userId));
     }
 
-    // ── Redeem miles ──────────────────────────────────────────────────
+    /**
+     * Redeem miles response entity.
+     *
+     * @param principal the principal
+     * @param request   the request
+     * @return the response entity
+     */
     @PostMapping("/redeem")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<LoyaltyAccountResponse> redeemMiles(
@@ -81,7 +117,13 @@ public class LoyaltyController {
                 loyaltyService.redeemMiles(principal.getId(), request));
     }
 
-    // ── Admin — adjust miles ──────────────────────────────────────────
+    /**
+     * Adjust miles response entity.
+     *
+     * @param userId  the user id
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping("/adjust/{userId}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<LoyaltyAccountResponse> adjustMiles(

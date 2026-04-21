@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The type Payment controller.
+ */
 @RestController
 @RequestMapping("/payments")
 @RequiredArgsConstructor
@@ -26,7 +29,19 @@ public class PaymentController {
 
     private static final String IDEMPOTENCY_HEADER = "Idempotency-Key";
 
-    // ── Admin — view all payments ─────────────────────────────────────
+
+    /**
+     * Gets payments.
+     *
+     * @param id               the id
+     * @param paymentReference the payment reference
+     * @param bookingId        the booking id
+     * @param userId           the user id
+     * @param status           the status
+     * @param paymentMethod    the payment method
+     * @param pageable         the pageable
+     * @return the payments
+     */
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'AGENT')")
     public ResponseEntity<List<PaymentResponse>> getPayments(
@@ -47,14 +62,25 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getPayments(request, pageable));
     }
 
-    // ── Get by id ─────────────────────────────────────────────────────
+
+    /**
+     * Gets payment by id.
+     *
+     * @param id the id
+     * @return the payment by id
+     */
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PaymentResponse> getPaymentById(@PathVariable Long id) {
         return ResponseEntity.ok(paymentService.getPaymentById(id));
     }
 
-    // ── Get by booking ────────────────────────────────────────────────
+    /**
+     * Gets payments by booking.
+     *
+     * @param bookingId the booking id
+     * @return the payments by booking
+     */
     @GetMapping("/booking/{bookingId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<PaymentResponse>> getPaymentsByBooking(
@@ -62,7 +88,13 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getPaymentsByBooking(bookingId));
     }
 
-    // ── Initiate payment — requires Idempotency-Key header ───────────
+    /**
+     * Initiate payment response entity.
+     *
+     * @param idempotencyKey the idempotency key
+     * @param request        the request
+     * @return the response entity
+     */
     @PostMapping
     @PreAuthorize("hasAnyRole('PASSENGER', 'AGENT', 'SUPER_ADMIN')")
     public ResponseEntity<PaymentResponse> initiatePayment(
@@ -73,7 +105,14 @@ public class PaymentController {
                 .body(paymentService.initiatePayment(idempotencyKey, request));
     }
 
-    // ── Process payment (calls gateway) ──────────────────────────────
+
+    /**
+     * Process payment response entity.
+     *
+     * @param idempotencyKey the idempotency key
+     * @param id             the id
+     * @return the response entity
+     */
     @PostMapping("/{id}/process")
     @PreAuthorize("hasAnyRole('PASSENGER', 'AGENT', 'SUPER_ADMIN')")
     public ResponseEntity<PaymentResponse> processPayment(
@@ -84,7 +123,14 @@ public class PaymentController {
                 paymentService.processPayment(idempotencyKey, id));
     }
 
-    // ── Initiate refund ───────────────────────────────────────────────
+
+    /**
+     * Initiate refund response entity.
+     *
+     * @param idempotencyKey the idempotency key
+     * @param request        the request
+     * @return the response entity
+     */
     @PostMapping("/refund")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'AGENT')")
     public ResponseEntity<RefundResponse> initiateRefund(
