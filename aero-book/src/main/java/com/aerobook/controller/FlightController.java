@@ -2,6 +2,7 @@ package com.aerobook.controller;
 
 import com.aerobook.annotations.AuthenticatedEndpoint;
 import com.aerobook.annotations.ExemptAuthorization;
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.*;
 import com.aerobook.domain.dto.request.get.FlightGetRequest;
 import com.aerobook.domain.dto.response.FlightFareResponse;
@@ -24,7 +25,7 @@ import static java.time.LocalDate.parse;
  * The type Flight controller.
  */
 @RestController
-@RequestMapping("/flights")
+@RequestMapping(ApiConstants.FLIGHTS)
 @RequiredArgsConstructor
 public class FlightController {
 

@@ -2,6 +2,7 @@ package com.aerobook.controller;
 
 
 import com.aerobook.annotations.AuthenticatedEndpoint;
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.AircraftRequest;
 import com.aerobook.domain.dto.request.AircraftSeatConfigRequest;
 import com.aerobook.domain.dto.request.get.AircraftGetRequest;
@@ -23,7 +24,7 @@ import java.util.List;
  * The type Aircraft controller.
  */
 @RestController
-@RequestMapping("/aircraft")
+@RequestMapping(ApiConstants.AIRCRAFT)
 @AllArgsConstructor
 public class AircraftController {
 

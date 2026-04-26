@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.response.NotificationResponse;
 import com.aerobook.security.UserPrincipal;
 import com.aerobook.service.NotificationService;
@@ -17,7 +18,7 @@ import java.util.List;
  * The type Notification controller.
  */
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping(ApiConstants.NOTIFICATIONS)
 @RequiredArgsConstructor
 public class NotificationController {
 

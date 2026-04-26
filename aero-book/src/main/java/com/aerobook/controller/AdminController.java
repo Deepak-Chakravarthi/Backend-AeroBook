@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.*;
 import com.aerobook.domain.dto.response.*;
 import com.aerobook.service.AdminFlightService;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping(ApiConstants.ADMIN)
 @RequiredArgsConstructor
 public class AdminController {
 

@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 import com.aerobook.annotations.AuthenticatedEndpoint;
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.RoleAssignRequest;
 import com.aerobook.domain.dto.request.UserStatusRequest;
 import com.aerobook.domain.dto.request.UserUpdateRequest;
@@ -20,7 +21,7 @@ import java.util.List;
  * The type User controller.
  */
 @RestController
-@RequestMapping("/users")
+@RequestMapping(ApiConstants.USERS)
 @RequiredArgsConstructor
 public class UserController {
 

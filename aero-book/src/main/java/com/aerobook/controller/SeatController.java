@@ -2,6 +2,7 @@ package com.aerobook.controller;
 
 
 import com.aerobook.annotations.ExemptAuthorization;
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.SeatHoldRequest;
 import com.aerobook.domain.dto.request.SeatReleaseRequest;
 import com.aerobook.domain.dto.request.get.SeatGetRequest;
@@ -24,7 +25,7 @@ import java.util.List;
  * The type Seat controller.
  */
 @RestController
-@RequestMapping("/seats")
+@RequestMapping(ApiConstants.SEATS)
 @RequiredArgsConstructor
 public class SeatController {
 

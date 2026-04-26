@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.get.PaymentGetRequest;
 import com.aerobook.domain.dto.request.PaymentRequest;
 import com.aerobook.domain.dto.request.RefundRequest;
@@ -21,7 +22,7 @@ import java.util.List;
  * The type Payment controller.
  */
 @RestController
-@RequestMapping("/payments")
+@RequestMapping(ApiConstants.PAYMENTS)
 @RequiredArgsConstructor
 public class PaymentController {
 

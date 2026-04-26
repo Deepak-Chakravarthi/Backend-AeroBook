@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 import com.aerobook.annotations.AuthenticatedEndpoint;
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.AirlineRequest;
 import com.aerobook.domain.dto.request.get.AirlineGetRequest;
 import com.aerobook.domain.dto.response.AirlineResponse;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * The type Airline controller.
  */
 @RestController
-@RequestMapping("/airlines")
+@RequestMapping(ApiConstants.AIRLINES)
 @RequiredArgsConstructor
 public class AirlineController {
 

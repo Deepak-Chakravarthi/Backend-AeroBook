@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.response.BoardingPassResponse;
 import com.aerobook.service.BoardingPassService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.List;
  * The type Boarding pass controller.
  */
 @RestController
-@RequestMapping("/boarding-passes")
+@RequestMapping(ApiConstants.BOARDING_PASSES)
 @RequiredArgsConstructor
 public class BoardingPassController {
 

@@ -3,6 +3,7 @@ package com.aerobook.controller;
 
 import com.aerobook.annotations.AuthenticatedEndpoint;
 import com.aerobook.annotations.ExemptAuthorization;
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.FlightScheduleRequest;
 import com.aerobook.domain.dto.response.FlightScheduleResponse;
 import com.aerobook.service.FlightScheduleService;
@@ -21,7 +22,7 @@ import java.util.List;
  * The type Flight schedule controller.
  */
 @RestController
-@RequestMapping("/flight-schedules")
+@RequestMapping(ApiConstants.SCHEDULES)
 @RequiredArgsConstructor
 public class FlightScheduleController {
 

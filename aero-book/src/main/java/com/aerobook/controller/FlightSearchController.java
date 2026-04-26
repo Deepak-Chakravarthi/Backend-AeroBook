@@ -2,6 +2,7 @@ package com.aerobook.controller;
 
 
 import com.aerobook.annotations.ExemptAuthorization;
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.FlightLegRequest;
 import com.aerobook.domain.dto.request.FlightSearchRequest;
 import com.aerobook.domain.dto.response.FlightSearchResponse;
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/flights/search")
+@RequestMapping(ApiConstants.FLIGHT_SEARCH)
 @RequiredArgsConstructor
 public class FlightSearchController {
 
