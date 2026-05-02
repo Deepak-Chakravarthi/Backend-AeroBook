@@ -1,5 +1,7 @@
 package com.aerobook.exception;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
  * The type Global exception handler.
  */
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     /**
@@ -139,6 +142,17 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 null
         ));
+    }
+    @ExceptionHandler(BoundaryViolationException.class)
+    @Profile("dev")
+    public ResponseEntity<ErrorResponse> handleBoundaryViolation(
+            BoundaryViolationException ex) {
+        log.error("MODULE BOUNDARY VIOLATED: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse(
+                        500, "BOUNDARY_VIOLATION",
+                        ex.getMessage(),
+                        LocalDateTime.now(), null));
     }
 
 

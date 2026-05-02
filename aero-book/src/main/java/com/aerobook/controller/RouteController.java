@@ -1,5 +1,6 @@
 package com.aerobook.controller;
 
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.RouteRequest;
 import com.aerobook.domain.dto.request.get.RouteGetRequest;
 import com.aerobook.domain.dto.response.RouteResponse;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * The type Route controller.
  */
 @RestController
-@RequestMapping("/routes")
+@RequestMapping(ApiConstants.ROUTES)
 @RequiredArgsConstructor
 public class RouteController {
 

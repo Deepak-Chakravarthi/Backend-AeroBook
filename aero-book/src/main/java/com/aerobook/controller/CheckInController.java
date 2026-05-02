@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.get.CheckInGetRequest;
 import com.aerobook.domain.dto.request.CheckInRequest;
 import com.aerobook.domain.dto.response.BoardingPassResponse;
@@ -23,7 +24,7 @@ import java.util.List;
  * The type Check in controller.
  */
 @RestController
-@RequestMapping("/check-in")
+@RequestMapping(ApiConstants.CHECK_IN)
 @RequiredArgsConstructor
 public class CheckInController {
 

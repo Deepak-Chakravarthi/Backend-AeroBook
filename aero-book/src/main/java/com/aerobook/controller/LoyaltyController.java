@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.MileAdjustRequest;
 import com.aerobook.domain.dto.request.MileRedeemRequest;
 import com.aerobook.domain.dto.response.LoyaltyAccountResponse;
@@ -22,7 +23,7 @@ import java.util.List;
  * The type Loyalty controller.
  */
 @RestController
-@RequestMapping("/loyalty")
+@RequestMapping(ApiConstants.LOYALTY)
 @RequiredArgsConstructor
 public class LoyaltyController {
 

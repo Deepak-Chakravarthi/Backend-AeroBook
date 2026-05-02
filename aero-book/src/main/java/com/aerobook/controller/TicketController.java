@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.get.TicketGetRequest;
 import com.aerobook.domain.dto.response.TicketResponse;
 import com.aerobook.service.TicketService;
@@ -16,7 +17,7 @@ import java.util.List;
  * The type Ticket controller.
  */
 @RestController
-@RequestMapping("/tickets")
+@RequestMapping(ApiConstants.TICKETS)
 @RequiredArgsConstructor
 public class TicketController {
 

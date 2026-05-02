@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.BookingCancelRequest;
 import com.aerobook.domain.dto.request.get.BookingGetRequest;
 import com.aerobook.domain.dto.request.BookingRequest;
@@ -21,7 +22,7 @@ import java.util.List;
  * The type Booking controller.
  */
 @RestController
-@RequestMapping("/bookings")
+@RequestMapping(ApiConstants.BOOKINGS)
 @RequiredArgsConstructor
 public class BookingController {
 

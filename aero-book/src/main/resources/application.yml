@@ -28,6 +28,10 @@ spring:
           starttls:
             enable: true
     default-encoding: UTF-8
+  mvc:
+    # Base API path — applied globally
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
   kafka:
     bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
@@ -65,3 +69,6 @@ aerobook:
     from-email: noreply@aerobook.com
     from-name: AeroBook
     kafka-enabled: false     # flip to true in Phase 2
+  api:
+    version: v1
+    base-path: /api/v1

@@ -273,24 +273,5 @@ public class FlightService {
                 "search:*:" + origin + ":" + destination + ":*");
     }
 
-    // In FlightService — called by listener
-    @Transactional
-    public void awardMilesForCompletedFlight(Flight flight) {
-        // Find all CONFIRMED bookings on this flight
-        bookingRepository.findAllByOutboundFlightIdAndStatus(
-                        flight.getId(), BookingStatus.CONFIRMED)
-                .forEach(booking -> {
-                    try {
-                        loyaltyService.awardMilesForFlight(
-                                booking.getUser().getId(),
-                                flight,
-                                booking.getOutboundSeatClass()
-                        );
-                    } catch (Exception e) {
-                        log.error("Failed to award miles — booking: {}, error: {}",
-                                booking.getPnr(), e.getMessage());
-                    }
-                });
-    }
 
 }

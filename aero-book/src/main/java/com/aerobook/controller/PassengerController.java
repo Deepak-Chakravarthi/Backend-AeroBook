@@ -1,6 +1,7 @@
 package com.aerobook.controller;
 
 
+import com.aerobook.constants.ApiConstants;
 import com.aerobook.domain.dto.request.get.PassengerGetRequest;
 import com.aerobook.domain.dto.request.PassengerRequest;
 import com.aerobook.domain.dto.response.PassengerResponse;
@@ -19,7 +20,7 @@ import java.util.List;
  * The type Passenger controller.
  */
 @RestController
-@RequestMapping("/passengers")
+@RequestMapping(ApiConstants.PASSENGERS)
 @RequiredArgsConstructor
 public class PassengerController {
 

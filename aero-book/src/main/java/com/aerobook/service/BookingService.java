@@ -10,6 +10,7 @@ import com.aerobook.entity.Booking;
 import com.aerobook.entity.Flight;
 import com.aerobook.entity.User;
 import com.aerobook.event.BookingConfirmedEvent;
+import com.aerobook.event.FlightCompletedEvent;
 import com.aerobook.exception.AeroBookException;
 import com.aerobook.exception.ResourceNotFoundException;
 import com.aerobook.mapper.BookingMapper;
@@ -19,8 +20,10 @@ import com.aerobook.util.PNRGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +46,7 @@ public class BookingService {
     private final SeatService       seatService;
     private final SeatInventoryService seatInventoryService;
     private final ApplicationEventPublisher eventPublisher;
+    private final LoyaltyService  loyaltyService;
 
 
     // ----------------------------------------------------------------
@@ -386,5 +390,29 @@ public class BookingService {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_SUPER_ADMIN")
                         || a.getAuthority().equals("ROLE_AGENT")
                         || a.getAuthority().equals("ROLE_AIRLINE_ADMIN"));
+    }
+
+    // BookingService owns BookingRepository — this is correct
+    @EventListener
+    @Async
+    public void onFlightCompleted(FlightCompletedEvent event) {
+        Flight flight = event.getFlight();
+
+        // BookingService fetching its own repo — correct boundary
+        List<Booking> bookings = bookingRepository
+                .findAllByOutboundFlightIdAndStatus(
+                        flight.getId(), BookingStatus.CONFIRMED);
+
+        bookings.forEach(booking -> {
+            try {
+                loyaltyService.awardMilesForFlight(
+                        booking.getUser().getId(),
+                        flight,
+                        booking.getOutboundSeatClass()
+                );
+            } catch (Exception e) {
+                log.error("Miles award failed — booking: {}", booking.getPnr());
+            }
+        });
     }
 }
